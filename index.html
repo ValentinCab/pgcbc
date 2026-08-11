@@ -79,6 +79,7 @@
     ];
     const COIN_SYMBOLS = ['⭐', '🪙', '💎', '💰', '🍎', '⚡', '🔥', '🌸', '🐾', '👑', '🥕', '🎈', '💵', '🥥'];
     const EMOJIS = ['🎮', '📺', '🍫', '📱', '🛌', '📚', '🏃‍♂️', '🎨', '🍕', '🍿', '🎧', '🧸', '💻', '⚽'];
+    const FIXED_ACCOUNT_CODE = 'valen';
     // El día de hábitos cambia a las 6:00 AM de Argentina, no a medianoche.
     const ARGENTINA_TIME_ZONE = 'America/Argentina/Buenos_Aires';
     const DAY_MS = 24 * 60 * 60 * 1000;
@@ -159,19 +160,13 @@
       };
 
       const [gameState, setGameState] = useState(() => {
-        const code = localStorage.getItem('habitos_secret');
-        if (code) {
-          const saved = localStorage.getItem('habitos_data_' + code);
-          if (saved) return { ...defaultState, ...JSON.parse(saved) };
-        }
+        const saved = localStorage.getItem('habitos_data_' + FIXED_ACCOUNT_CODE);
+        if (saved) return { ...defaultState, ...JSON.parse(saved) };
         return defaultState;
       });
-      const [isLoading, setIsLoading] = useState(false);
-      
-      // Siempre mostramos el selector al abrir la app: así se puede entrar con
-      // un clic en una cuenta existente, incluso desde un dispositivo nuevo.
-      const [secretCode, setSecretCode] = useState('');
-      const [isLoggedIn, setIsLoggedIn] = useState(false);
+      const [isLoading, setIsLoading] = useState(true);
+      const [secretCode] = useState(FIXED_ACCOUNT_CODE);
+      const [isLoggedIn] = useState(true);
 
       const [activeTab, setActiveTab] = useState('habits'); 
       const [showHabitModal, setShowHabitModal] = useState(false);
@@ -343,31 +338,7 @@
         }
       };
 
-      const login = (code) => {
-        localStorage.setItem('habitos_secret', code);
-        setSecretCode(code);
-        setIsLoggedIn(true);
-        
-        const saved = localStorage.getItem('habitos_data_' + code);
-        if (saved) {
-          setGameState({ ...defaultState, ...JSON.parse(saved) });
-        } else {
-          setGameState(defaultState);
-        }
-      };
-
-      const logout = () => {
-        localStorage.removeItem('habitos_secret');
-        setSecretCode('');
-        setIsLoggedIn(false);
-        setGameState(defaultState);
-      };
-
       const pluralize = (word) => word.endsWith('s') ? word : word + 's';
-
-      if (!isLoggedIn) {
-        return <LoginScreen onLogin={login} />;
-      }
 
       if (isLoading && !gameState.isSetup) {
         return (
@@ -379,7 +350,7 @@
       }
 
       if (!gameState.isSetup) {
-        return <SetupScreen gameState={gameState} updateState={updateState} onLogout={logout} />;
+        return <SetupScreen gameState={gameState} updateState={updateState} />;
       }
 
       return (
@@ -425,7 +396,7 @@
                 <BackpackTab gameState={gameState} updateState={updateState} />
               )}
               {activeTab === 'settings' && (
-                <SettingsTab gameState={gameState} updateState={updateState} onLogout={logout} />
+                <SettingsTab gameState={gameState} updateState={updateState} />
               )}
             </main>
 
@@ -521,77 +492,7 @@
       );
     }
 
-    function LoginScreen({ onLogin }) {
-      const [code, setCode] = useState('');
-      const [accounts, setAccounts] = useState([]);
-      const [loadingAccounts, setLoadingAccounts] = useState(true);
-      const [accountsError, setAccountsError] = useState(false);
-
-      useEffect(() => {
-        // Leemos las cuentas ya creadas para mostrarlas como accesos directos.
-        // El listener hace que la lista también se actualice si se crea una
-        // cuenta desde otro dispositivo mientras esta pantalla está abierta.
-        const unsubscribe = db.collection('cuentas').onSnapshot((snapshot) => {
-          setAccounts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-          setLoadingAccounts(false);
-        }, (error) => {
-          console.warn('No se pudieron cargar las cuentas:', error.message);
-          setAccountsError(true);
-          setLoadingAccounts(false);
-        });
-
-        return () => unsubscribe();
-      }, []);
-
-      return (
-        <div className="min-h-screen bg-sky-50 flex items-center justify-center p-4">
-           <div className="bg-white p-6 rounded-[2rem] shadow-xl border-4 border-white max-w-sm w-full text-center">
-              <h1 className="text-2xl font-black text-sky-600 mb-4">¡Hola! 👋</h1>
-              <p className="text-gray-600 text-sm mb-5 font-medium">Elegí una cuenta para entrar a tu economía.</p>
-
-              {loadingAccounts && (
-                <div className="text-sm font-bold text-sky-500 py-3">Cargando cuentas...</div>
-              )}
-
-              {!loadingAccounts && accounts.length > 0 && (
-                <div className="space-y-3 mb-5">
-                  {accounts.map(account => {
-                    const accountName = account.accountName || account.id;
-                    return (
-                      <button
-                        key={account.id}
-                        onClick={() => onLogin(account.id)}
-                        className="w-full text-left p-4 rounded-2xl border-2 border-sky-100 bg-sky-50 hover:bg-sky-100 active:scale-[0.98] transition-all"
-                      >
-                        <div className="font-black text-sky-700 text-lg">{account.coinSymbol || '⭐'} {accountName}</div>
-                        <div className="text-xs font-bold text-sky-500 mt-1">Tocar para entrar</div>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-
-              <p className="text-gray-500 text-xs mb-3 font-bold">{accounts.length ? '¿Querés crear o abrir otra cuenta?' : '¿Es tu primera vez o no aparece tu cuenta?'}</p>
-              <input 
-                 type="text" 
-                 value={code} 
-                 onChange={e => setCode(e.target.value)}
-                 placeholder="Ej: mis-habitos-secreto"
-                 className="w-full text-center text-lg font-bold border-2 border-sky-100 rounded-xl p-3 bg-gray-50 outline-none focus:border-sky-300 mb-3"
-              />
-              <button 
-                 onClick={() => code.trim() && onLogin(code.trim())}
-                 className="w-full py-3 rounded-xl text-lg font-black text-white bg-sky-500 active:scale-95 transition-all shadow-md"
-              >
-                 Entrar con código
-              </button>
-              {accountsError && <p className="text-xs text-amber-600 font-bold mt-3">No se pudieron cargar las cuentas. Podés entrar escribiendo tu código.</p>}
-           </div>
-        </div>
-      );
-    }
-
-    function SetupScreen({ gameState, updateState, onLogout }) {
+    function SetupScreen({ gameState, updateState }) {
       const [name, setName] = useState(gameState.coinName);
       const [color, setColor] = useState(gameState.coinColor);
       const [symbol, setSymbol] = useState(gameState.coinSymbol);
@@ -636,10 +537,6 @@
               className="w-full py-3 rounded-xl text-lg font-black text-white bg-pink-500 active:scale-95 transition-all shadow-md">
               ¡Comenzar! 🚀
             </button>
-            <button onClick={onLogout}
-              className="w-full mt-3 py-3 rounded-xl text-sm font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all">
-              Volver / Cambiar Código
-            </button>
           </div>
         </div>
       );
@@ -678,8 +575,13 @@
 
       const handleHabitClick = (habit) => {
         const change = habit.type === 'good' ? habit.amount : -habit.amount;
+        const entry = getProgress(habit);
+        const nextProgress = {
+          ...habitProgress,
+          [habit.id]: { ...entry, count: entry.count + 1, history: [...entry.history, Date.now()] }
+        };
         updateState(
-          { balance: gameState.balance + change }, 
+          { balance: gameState.balance + change, habitProgress: nextProgress, habitProgressDay: currentHabitDay }, 
           habit.type === 'good' ? `¡Sumaste ${habit.amount} ${gameState.coinName}!` : `Restaste ${habit.amount} ${gameState.coinName}`
         );
       };
@@ -878,7 +780,7 @@
       );
     }
 
-    function SettingsTab({ gameState, updateState, onLogout }) {
+    function SettingsTab({ gameState, updateState }) {
       return (
         <div className="space-y-6 animate-in fade-in duration-300">
           <div className="text-center mb-6 mt-2">
@@ -910,12 +812,6 @@
             </div>
           </div>
           
-          <button 
-            onClick={onLogout}
-            className="w-full py-4 mt-2 rounded-2xl font-black text-red-500 bg-red-50 dark:bg-red-900/20 border-2 border-red-100 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/40 active:scale-95 transition-all"
-          >
-            Cerrar Sesión / Cambiar Código
-          </button>
         </div>
       );
     }
