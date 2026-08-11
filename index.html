@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Economía de mis hábitos</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+
+  <!-- React y ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+  
+  <style>
+    body { -webkit-tap-highlight-color: transparent; }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+    html, body { overflow-x: hidden; }
+  </style>
+</head>
+<body class="bg-sky-50 dark:bg-slate-900 transition-colors duration-300">
+  
+  <div id="root"></div>
+
+  <!-- AQUI EMPIEZA LA APLICACION -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+    
+    // Iconos SVG 
+    const Plus = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>;
+    const Minus = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/></svg>;
+    const Check = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>;
+    const ShoppingBag = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>;
+    const Backpack = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M8 21v-5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v5"/><path d="M8 10h8"/><path d="M8 14h8"/></svg>;
+    const Trash2 = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>;
+    const X = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>;
+    const Settings = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>;
+    const Moon = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>;
+    const Sun = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>;
+    const Lock = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>;
+    const Timer = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>;
+    const Edit3 = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
+    const RotateCcw = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>;
+    const GripVertical = (p) => <svg {...p} viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>;
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDlbQX9GfpXTIQSM8SqjagR3VwxqN4R_1A",
+      authDomain: "economia-de-habitos.firebaseapp.com",
+      databaseURL: "https://economia-de-habitos-default-rtdb.firebaseio.com",
+      projectId: "economia-de-habitos",
+      storageBucket: "economia-de-habitos.firebasestorage.app",
+      messagingSenderId: "562796345847",
+      appId: "1:562796345847:web:51948c8699f6a8d42d16f2",
+      measurementId: "G-SZY4CN47EB"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    const COIN_COLORS = [
+      { name: 'Oro', value: '#FCD34D', bg: 'bg-yellow-300', text: 'text-yellow-700' },
+      { name: 'Rubí', value: '#FCA5A5', bg: 'bg-red-300', text: 'text-red-700' },
+      { name: 'Esmeralda', value: '#86EFAC', bg: 'bg-green-300', text: 'text-green-700' },
+      { name: 'Zafiro', value: '#93C5FD', bg: 'bg-blue-300', text: 'text-blue-700' },
+      { name: 'Amatista', value: '#D8B4FE', bg: 'bg-purple-300', text: 'text-purple-700' },
+    ];
+    const COIN_SYMBOLS = ['⭐', '🪙', '💎', '💰', '🍎', '⚡', '🔥', '🌸', '🐾', '👑', '🥕', '🎈', '💵', '🥥'];
+    const EMOJIS = ['🎮', '📺', '🍫', '📱', '🛌', '📚', '🏃‍♂️', '🎨', '🍕', '🍿', '🎧', '🧸', '💻', '⚽'];
+    // El día de hábitos cambia a las 6:00 AM de Argentina, no a medianoche.
+    const ARGENTINA_TIME_ZONE = 'America/Argentina/Buenos_Aires';
+    const DAY_MS = 24 * 60 * 60 * 1000;
+    const WEEKDAY_OPTIONS = [
+      { value: 1, label: 'Lunes' }, { value: 2, label: 'Martes' }, { value: 3, label: 'Miércoles' },
+      { value: 4, label: 'Jueves' }, { value: 5, label: 'Viernes' }, { value: 6, label: 'Sábado' }, { value: 0, label: 'Domingo' }
+    ];
+    const argentinaDayFormatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Argentina/Buenos_Aires',
+      year: 'numeric', month: '2-digit', day: '2-digit'
+    });
+    const argentinaWeekdayFormatter = new Intl.DateTimeFormat('en-US', { timeZone: ARGENTINA_TIME_ZONE, weekday: 'short' });
+    const getHabitReferenceDate = (date = new Date()) => new Date(new Date(date).getTime() - 6 * 60 * 60 * 1000);
+    const getHabitDayKeyForDate = (date) => argentinaDayFormatter.format(getHabitReferenceDate(date));
+    const getHabitDayKey = () => getHabitDayKeyForDate(new Date());
+    const getHabitWeekdayIndex = (date = new Date()) => ({ Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 })[argentinaWeekdayFormatter.format(getHabitReferenceDate(date))];
+    const getWeeklyCycleKey = (resetDay = 1) => {
+      const referenceDate = getHabitReferenceDate();
+      const difference = (getHabitWeekdayIndex() - Number(resetDay) + 7) % 7;
+      return argentinaDayFormatter.format(new Date(referenceDate.getTime() - difference * DAY_MS));
+    };
+    const getHabitProgressCycleKey = (habit) => {
+      if (habit?.trackingMode !== 'weekly') return getHabitDayKey();
+      return habit.weeklyResetMode === 'manual' ? null : getWeeklyCycleKey(habit.weeklyResetDay);
+    };
+    const normalizeProgressEntry = (value, fallbackCycleKey = null) => {
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        return {
+          count: Math.max(0, Number(value.count) || 0),
+          history: Array.isArray(value.history) ? value.history.filter(time => Number.isFinite(Number(time))).map(Number) : [],
+          cycleKey: value.cycleKey ?? fallbackCycleKey
+        };
+      }
+      return { count: Math.max(0, Number(value) || 0), history: [], cycleKey: fallbackCycleKey };
+    };
+    const getActiveProgressEntry = (value, habit, legacyDayKey = null) => {
+      const expectedCycleKey = getHabitProgressCycleKey(habit);
+      const fallbackCycleKey = habit?.trackingMode === 'weekly' ? expectedCycleKey : (legacyDayKey || expectedCycleKey);
+      const entry = normalizeProgressEntry(value, fallbackCycleKey);
+      if (expectedCycleKey && entry.cycleKey !== expectedCycleKey) return { count: 0, history: [], cycleKey: expectedCycleKey };
+      return entry;
+    };
+    const cleanExpiredHabitProgress = (progress, habits, legacyDayKey = null) => {
+      const nextProgress = {};
+      Object.entries(progress || {}).forEach(([habitId, value]) => {
+        const habit = (habits || []).find(item => String(item.id) === String(habitId));
+        if (!habit) return;
+        const entry = getActiveProgressEntry(value, habit, legacyDayKey);
+        if (entry.count > 0) nextProgress[habitId] = entry;
+      });
+      return nextProgress;
+    };
+    const formatProgressTimestamp = (timestamp, isWeekly) => {
+      if (!timestamp) return null;
+      const time = new Intl.DateTimeFormat('es-AR', { timeZone: ARGENTINA_TIME_ZONE, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(timestamp));
+      if (!isWeekly) return `Última vez: ${time}`;
+      const elapsedDays = Math.round((Date.parse(`${getHabitDayKey()}T00:00:00Z`) - Date.parse(`${getHabitDayKeyForDate(new Date(timestamp))}T00:00:00Z`)) / DAY_MS);
+      if (elapsedDays <= 0) return `Hoy, ${time}`;
+      if (elapsedDays === 1) return 'Ayer';
+      if (elapsedDays === 2) return 'Antes de ayer';
+      return new Intl.DateTimeFormat('es-AR', { timeZone: ARGENTINA_TIME_ZONE, day: '2-digit', month: '2-digit' }).format(new Date(timestamp));
+    };
+
+    function App() {
+      const defaultState = {
+        isSetup: false,
+        coinName: 'Moneda',
+        coinSymbol: '⭐',
+        coinColor: COIN_COLORS[0],
+        balance: 0,
+        habits: [],
+        habitProgress: {},
+        habitProgressDay: null,
+        rewards: [],
+        inventory: [], 
+        theme: 'light',
+        uiScale: 0.9 
+      };
+
+      const [gameState, setGameState] = useState(() => {
+        const code = localStorage.getItem('habitos_secret');
+        if (code) {
+          const saved = localStorage.getItem('habitos_data_' + code);
+          if (saved) return { ...defaultState, ...JSON.parse(saved) };
+        }
+        return defaultState;
+      });
+      const [isLoading, setIsLoading] = useState(false);
+      
+      // Siempre mostramos el selector al abrir la app: así se puede entrar con
+      // un clic en una cuenta existente, incluso desde un dispositivo nuevo.
+      const [secretCode, setSecretCode] = useState('');
+      const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+      const [activeTab, setActiveTab] = useState('habits'); 
+      const [showHabitModal, setShowHabitModal] = useState(false);
+      const [editingHabit, setEditingHabit] = useState(null); 
+      const [showAddReward, setShowAddReward] = useState(false);
+      const [editingReward, setEditingReward] = useState(null);
+      const [purchaseModal, setPurchaseModal] = useState({ show: false, reward: null, qty: 1 });
+
+      const [pastState, setPastState] = useState(null);
+      const [toastMsg, setToastMsg] = useState(null);
+      const undoTimeout = useRef(null);
+      const localRecoveryDone = useRef(false);
+      const lastLocalChange = useRef(0);
+
+      useEffect(() => {
+        if (!isLoggedIn || !secretCode) return;
+        localRecoveryDone.current = false;
+        lastLocalChange.current = 0;
+        setIsLoading(true);
+        
+        // 1. Cargar local rápido
+        const localData = localStorage.getItem('habitos_data_' + secretCode);
+        const localState = localData ? JSON.parse(localData) : null;
+        if (localState) {
+          setGameState(prev => ({ ...prev, ...localState }));
+        }
+
+        // Sistema de seguridad: si Firebase falla o tarda por no estar activado, forzamos parar la carga
+        const fallbackTimer = setTimeout(() => {
+           setIsLoading(false);
+           console.warn("Firebase tardó en responder. Usando modo local.");
+        }, 2000);
+        
+        // 2. Conectar a Firebase
+        const unsubscribe = db.collection('cuentas').doc(secretCode).onSnapshot((docSnap) => {
+          clearTimeout(fallbackTimer);
+          if (docSnap.exists) {
+            const remoteData = docSnap.data();
+            const remoteChange = Number(remoteData.updatedAt) || 0;
+
+            // Ignoramos una respuesta anterior a una acción que acabamos de
+            // hacer, para que no pueda volver a mostrar una mochila vieja.
+            if (remoteChange < lastLocalChange.current) {
+              setIsLoading(false);
+              return;
+            }
+            lastLocalChange.current = remoteChange;
+
+            let data = {
+              ...remoteData,
+              habits: Array.isArray(remoteData.habits) ? remoteData.habits : [],
+              rewards: Array.isArray(remoteData.rewards) ? remoteData.rewards : [],
+              inventory: Array.isArray(remoteData.inventory) ? remoteData.inventory : [],
+              habitProgress: remoteData.habitProgress && typeof remoteData.habitProgress === 'object' ? remoteData.habitProgress : {}
+            };
+            if (!data.coinSymbol) data.coinSymbol = '⭐';
+
+            const currentHabitDay = getHabitDayKey();
+            const cleanedProgress = cleanExpiredHabitProgress(data.habitProgress, data.habits, data.habitProgressDay);
+            const needsProgressSync = data.habitProgressDay !== currentHabitDay || JSON.stringify(data.habitProgress) !== JSON.stringify(cleanedProgress);
+            const progressSyncFields = needsProgressSync ? {
+              habitProgress: cleanedProgress,
+              habitProgressDay: currentHabitDay
+            } : {};
+            data = { ...data, ...progressSyncFields };
+
+            // Los premios creados por la versión anterior quedaban sólo en
+            // este navegador. Si aún existen localmente y Firebase tiene
+            // esos arreglos vacíos, los recuperamos una sola vez al ingresar.
+            const recoveredFields = {};
+            if (!localRecoveryDone.current && localState?.rewards?.length && !data.rewards?.length) {
+              recoveredFields.rewards = localState.rewards;
+            }
+            if (!localRecoveryDone.current && localState?.inventory?.length && !data.inventory?.length) {
+              recoveredFields.inventory = localState.inventory;
+            }
+            localRecoveryDone.current = true;
+
+            setGameState(prev => {
+              const merged = { ...prev, ...data, ...recoveredFields };
+              localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(merged));
+              return merged;
+            });
+
+            const fieldsToSync = { ...recoveredFields, ...progressSyncFields };
+            if (Object.keys(fieldsToSync).length) {
+              const recoveryTime = Date.now();
+              lastLocalChange.current = recoveryTime;
+              db.collection('cuentas').doc(secretCode).set({ ...fieldsToSync, updatedAt: recoveryTime }, { merge: true })
+                .catch(err => console.warn("No se pudo actualizar o recuperar el seguimiento:", err));
+            }
+          }
+          setIsLoading(false);
+        }, (error) => {
+          clearTimeout(fallbackTimer);
+          console.warn("Modo Local Activo debido a error de conexión:", error.message);
+          
+          if (error.code === 'permission-denied') {
+             // Apagar la red de Firebase para detener los reintentos infinitos y limpiar la consola
+             db.disableNetwork().catch(err => console.error("Error al deshabilitar red:", err));
+             setToastMsg("⚠️ Modo Local: Base de datos no habilitada.");
+             setTimeout(() => setToastMsg(null), 5000);
+          }
+          
+          setIsLoading(false); 
+        });
+
+        return () => {
+          clearTimeout(fallbackTimer);
+          unsubscribe();
+        };
+      }, [isLoggedIn, secretCode]);
+
+      const updateState = (updates, undoMessage = null) => {
+        const newState = { ...gameState, ...updates };
+        const changeTime = Date.now();
+        lastLocalChange.current = changeTime;
+
+        if (undoMessage) {
+          setPastState(gameState); 
+          setToastMsg(undoMessage);
+          if (undoTimeout.current) clearTimeout(undoTimeout.current);
+          undoTimeout.current = setTimeout(() => {
+            setPastState(null);
+            setToastMsg(null);
+          }, 5000); 
+        }
+        
+        setGameState(newState);
+
+        if (isLoggedIn && secretCode) {
+          localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(newState));
+          // Guardamos sólo los campos cambiados, evitando que un estado viejo
+          // de otra pestaña reescriba la mochila completa.
+          db.collection('cuentas').doc(secretCode).set({ ...updates, updatedAt: changeTime }, { merge: true })
+            .catch(err => console.warn("Modo local activo:", err));
+        }
+      };
+
+      // El reinicio no depende de que esté abierta la pestaña de Hábitos.
+      // Mantiene los semanales/manuales y limpia sólo lo que ya venció.
+      useEffect(() => {
+        if (!isLoggedIn) return;
+        const refreshExpiredProgress = () => {
+          const newHabitDay = getHabitDayKey();
+          const cleanedProgress = cleanExpiredHabitProgress(gameState.habitProgress, gameState.habits, gameState.habitProgressDay);
+          if (gameState.habitProgressDay !== newHabitDay || JSON.stringify(gameState.habitProgress || {}) !== JSON.stringify(cleanedProgress)) {
+            updateState({ habitProgress: cleanedProgress, habitProgressDay: newHabitDay });
+          }
+        };
+        refreshExpiredProgress();
+        const resetTimer = setInterval(refreshExpiredProgress, 30000);
+        return () => clearInterval(resetTimer);
+      }, [isLoggedIn, gameState.habitProgress, gameState.habitProgressDay, gameState.habits]);
+
+      const handleUndo = () => {
+        if (pastState) {
+          const changeTime = Date.now();
+          lastLocalChange.current = changeTime;
+          setGameState(pastState);
+          if (isLoggedIn && secretCode) {
+            localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(pastState));
+            db.collection('cuentas').doc(secretCode).set({ ...pastState, updatedAt: changeTime })
+              .catch(err => console.warn("Modo local activo:", err));
+          }
+          setPastState(null);
+          setToastMsg(null);
+          if (undoTimeout.current) clearTimeout(undoTimeout.current);
+        }
+      };
+
+      const login = (code) => {
+        localStorage.setItem('habitos_secret', code);
+        setSecretCode(code);
+        setIsLoggedIn(true);
+        
+        const saved = localStorage.getItem('habitos_data_' + code);
+        if (saved) {
+          setGameState({ ...defaultState, ...JSON.parse(saved) });
+        } else {
+          setGameState(defaultState);
+        }
+      };
+
+      const logout = () => {
+        localStorage.removeItem('habitos_secret');
+        setSecretCode('');
+        setIsLoggedIn(false);
+        setGameState(defaultState);
+      };
+
+      const pluralize = (word) => word.endsWith('s') ? word : word + 's';
+
+      if (!isLoggedIn) {
+        return <LoginScreen onLogin={login} />;
+      }
+
+      if (isLoading && !gameState.isSetup) {
+        return (
+          <div className="min-h-screen bg-sky-50 flex flex-col items-center justify-center p-4">
+            <div className="w-12 h-12 border-4 border-pink-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <h2 className="text-xl font-bold text-sky-800">Conectando...</h2>
+          </div>
+        );
+      }
+
+      if (!gameState.isSetup) {
+        return <SetupScreen gameState={gameState} updateState={updateState} onLogout={logout} />;
+      }
+
+      return (
+        <div className={gameState.theme === 'dark' ? 'dark' : ''}>
+          <div className="min-h-screen bg-sky-50 dark:bg-slate-900 font-sans pb-24 text-gray-800 dark:text-gray-100 transition-colors duration-300 relative">
+            
+            <header 
+              className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md sticky top-0 z-10 p-3 rounded-b-3xl shadow-sm flex flex-col items-center justify-center border-b-2 border-sky-100 dark:border-slate-700 transition-colors duration-300"
+              style={{ zoom: gameState.uiScale }}
+            >
+              <h1 className="text-lg font-black text-sky-800 dark:text-sky-300 mb-1">Economía de mis hábitos</h1>
+              <div className={`flex items-center gap-2 px-5 py-2 rounded-full shadow-inner border-2 border-white dark:border-slate-600 ${gameState.coinColor.bg} ${gameState.coinColor.text}`}>
+                <span className="text-2xl animate-pulse drop-shadow-sm">{gameState.coinSymbol}</span>
+                <span className="text-2xl font-black">{gameState.balance}</span>
+                <span className="text-sm font-bold uppercase tracking-wider">{pluralize(gameState.coinName)}</span>
+              </div>
+            </header>
+
+            <main className={`p-3 ${activeTab === 'habits' ? 'max-w-6xl' : 'max-w-2xl'} mx-auto mt-2`} style={{ zoom: gameState.uiScale }}>
+              {activeTab === 'habits' && (
+                <HabitsTab 
+                  gameState={gameState} 
+                  updateState={updateState} 
+                  onAdd={() => { setEditingHabit(null); setShowHabitModal(true); }} 
+                  onEdit={(habit) => { setEditingHabit(habit); setShowHabitModal(true); }}
+                />
+              )}
+              {activeTab === 'shop' && (
+                <ShopTab gameState={gameState} onAdd={() => { setEditingReward(null); setShowAddReward(true); }}
+                  onEdit={(reward) => { setEditingReward(reward); setShowAddReward(true); }}
+                  onDelete={(rewardId) => updateState({
+                    rewards: gameState.rewards.filter(reward => reward.id !== rewardId),
+                    inventory: gameState.inventory.filter(item => item.rewardId !== rewardId)
+                  }, 'Premio eliminado')}
+                  onBuy={(reward) => setPurchaseModal({ 
+                    show: true, 
+                    reward, 
+                    qty: reward.isTimeBased ? reward.minPurchaseTime : reward.minPurchase 
+                  })}
+                />
+              )}
+              {activeTab === 'backpack' && (
+                <BackpackTab gameState={gameState} updateState={updateState} />
+              )}
+              {activeTab === 'settings' && (
+                <SettingsTab gameState={gameState} updateState={updateState} onLogout={logout} />
+              )}
+            </main>
+
+            {toastMsg && (
+              <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 z-40 animate-in slide-in-from-bottom-5 fade-in duration-300" style={{ transform: 'translateX(-50%)' }}>
+                <span className="text-sm font-bold whitespace-nowrap">{toastMsg}</span>
+                <button onClick={handleUndo} className="flex items-center gap-1 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-xl text-sm font-black transition-colors active:scale-95">
+                  <RotateCcw size={14} /> Deshacer
+                </button>
+              </div>
+            )}
+
+            <nav className="fixed bottom-0 w-full bg-white dark:bg-slate-800 border-t-2 border-sky-100 dark:border-slate-700 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-safe transition-colors duration-300 z-30">
+              <div className="max-w-2xl mx-auto flex justify-around p-2">
+                <NavButton active={activeTab === 'habits'} onClick={() => setActiveTab('habits')} icon={<Check className="w-6 h-6" />} text="Hábitos" color="text-emerald-500" />
+                <NavButton active={activeTab === 'shop'} onClick={() => setActiveTab('shop')} icon={<ShoppingBag className="w-6 h-6" />} text="Premios" color="text-pink-500" />
+                <NavButton active={activeTab === 'backpack'} onClick={() => setActiveTab('backpack')} icon={<Backpack className="w-6 h-6" />} text="Mochila" color="text-amber-500" badge={gameState.inventory.length} />
+                <NavButton active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Settings className="w-6 h-6" />} text="Ajustes" color="text-gray-500 dark:text-gray-400" />
+              </div>
+            </nav>
+
+            {}
+            {showHabitModal && (
+              <HabitModal 
+                habit={editingHabit}
+                coinName={gameState.coinName}
+                onClose={() => setShowHabitModal(false)} 
+                onSave={(newHabit) => {
+                  const savedHabit = editingHabit ? { ...newHabit, id: editingHabit.id } : { ...newHabit, id: Date.now() };
+                  if (editingHabit) {
+                    const updated = gameState.habits.map(h => h.id === editingHabit.id ? savedHabit : h);
+                    const nextProgress = { ...gameState.habitProgress };
+                    if (nextProgress[savedHabit.id]) {
+                      const entry = normalizeProgressEntry(nextProgress[savedHabit.id], getHabitProgressCycleKey(savedHabit));
+                      nextProgress[savedHabit.id] = { ...entry, cycleKey: getHabitProgressCycleKey(savedHabit) };
+                    }
+                    updateState({ habits: updated, habitProgress: nextProgress, habitProgressDay: getHabitDayKey() });
+                  } else {
+                    updateState({ habits: [...gameState.habits, savedHabit] });
+                  }
+                  setShowHabitModal(false);
+                }} 
+              />
+            )}
+            
+            {showAddReward && (
+              <AddRewardModal 
+                reward={editingReward}
+                coinName={gameState.coinName}
+                onClose={() => { setShowAddReward(false); setEditingReward(null); }}
+                onSave={(newReward) => {
+                  setShowAddReward(false);
+                  setEditingReward(null);
+                  if (editingReward) {
+                    updateState({ rewards: gameState.rewards.map(reward => reward.id === editingReward.id ? { ...newReward, id: reward.id } : reward) });
+                  } else {
+                    updateState({ rewards: [...gameState.rewards, { ...newReward, id: Date.now() }] });
+                  }
+                }} 
+              />
+            )}
+            
+            {purchaseModal.show && (
+              <PurchaseModal
+                modal={purchaseModal}
+                coinName={gameState.coinName} 
+                balance={gameState.balance}
+                onClose={() => setPurchaseModal({ show: false, reward: null, qty: 1 })}
+                setQty={(q) => setPurchaseModal(prev => ({ ...prev, qty: q }))}
+                onConfirm={() => {
+                  const r = purchaseModal.reward;
+                  const cost = r.isTimeBased 
+                    ? (purchaseModal.qty / r.timeUnit) * r.costPerUnit 
+                    : purchaseModal.qty * r.cost;
+                  
+                  if (gameState.balance >= cost) {
+                    const newBalance = gameState.balance - cost;
+                    let newInv = [...gameState.inventory];
+                    const existingItemIndex = newInv.findIndex(i => i.rewardId === r.id);
+                    if (existingItemIndex >= 0) {
+                      newInv[existingItemIndex].quantity += purchaseModal.qty;
+                    } else {
+                      newInv.push({ rewardId: r.id, quantity: purchaseModal.qty });
+                    }
+                    updateState({ balance: newBalance, inventory: newInv }, '¡Premio comprado!');
+                    setPurchaseModal({ show: false, reward: null, qty: 1 });
+                  }
+                }}
+              />
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function LoginScreen({ onLogin }) {
+      const [code, setCode] = useState('');
+      const [accounts, setAccounts] = useState([]);
+      const [loadingAccounts, setLoadingAccounts] = useState(true);
+      const [accountsError, setAccountsError] = useState(false);
+
+      useEffect(() => {
+        // Leemos las cuentas ya creadas para mostrarlas como accesos directos.
+        // El listener hace que la lista también se actualice si se crea una
+        // cuenta desde otro dispositivo mientras esta pantalla está abierta.
+        const unsubscribe = db.collection('cuentas').onSnapshot((snapshot) => {
+          setAccounts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+          setLoadingAccounts(false);
+        }, (error) => {
+          console.warn('No se pudieron cargar las cuentas:', error.message);
+          setAccountsError(true);
+          setLoadingAccounts(false);
+        });
+
+        return () => unsubscribe();
+      }, []);
+
+      return (
+        <div className="min-h-screen bg-sky-50 flex items-center justify-center p-4">
+           <div className="bg-white p-6 rounded-[2rem] shadow-xl border-4 border-white max-w-sm w-full text-center">
+              <h1 className="text-2xl font-black text-sky-600 mb-4">¡Hola! 👋</h1>
+              <p className="text-gray-600 text-sm mb-5 font-medium">Elegí una cuenta para entrar a tu economía.</p>
+
+              {loadingAccounts && (
+                <div className="text-sm font-bold text-sky-500 py-3">Cargando cuentas...</div>
+              )}
+
+              {!loadingAccounts && accounts.length > 0 && (
+                <div className="space-y-3 mb-5">
+                  {accounts.map(account => {
+                    const accountName = account.accountName || account.id;
+                    return (
+                      <button
+                        key={account.id}
+                        onClick={() => onLogin(account.id)}
+                        className="w-full text-left p-4 rounded-2xl border-2 border-sky-100 bg-sky-50 hover:bg-sky-100 active:scale-[0.98] transition-all"
+                      >
+                        <div className="font-black text-sky-700 text-lg">{account.coinSymbol || '⭐'} {accountName}</div>
+                        <div className="text-xs font-bold text-sky-500 mt-1">Tocar para entrar</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              <p className="text-gray-500 text-xs mb-3 font-bold">{accounts.length ? '¿Querés crear o abrir otra cuenta?' : '¿Es tu primera vez o no aparece tu cuenta?'}</p>
+              <input 
+                 type="text" 
+                 value={code} 
+                 onChange={e => setCode(e.target.value)}
+                 placeholder="Ej: mis-habitos-secreto"
+                 className="w-full text-center text-lg font-bold border-2 border-sky-100 rounded-xl p-3 bg-gray-50 outline-none focus:border-sky-300 mb-3"
+              />
+              <button 
+                 onClick={() => code.trim() && onLogin(code.trim())}
+                 className="w-full py-3 rounded-xl text-lg font-black text-white bg-sky-500 active:scale-95 transition-all shadow-md"
+              >
+                 Entrar con código
+              </button>
+              {accountsError && <p className="text-xs text-amber-600 font-bold mt-3">No se pudieron cargar las cuentas. Podés entrar escribiendo tu código.</p>}
+           </div>
+        </div>
+      );
+    }
+
+    function SetupScreen({ gameState, updateState, onLogout }) {
+      const [name, setName] = useState(gameState.coinName);
+      const [color, setColor] = useState(gameState.coinColor);
+      const [symbol, setSymbol] = useState(gameState.coinSymbol);
+
+      return (
+        <div className="min-h-screen bg-pink-50 flex items-center justify-center p-4">
+          <div className="bg-white p-6 rounded-[2rem] shadow-xl border-4 border-white max-w-sm w-full text-center relative overflow-hidden">
+            <h1 className="text-2xl font-black text-pink-500 mb-4 relative z-10">¡Bienvenido! ✨</h1>
+            <p className="text-gray-600 text-sm mb-6 font-medium">Configuremos tu economía.</p>
+            
+            <div className="mb-4">
+              <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Nombre de tu moneda</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+                className="w-full text-center text-xl font-bold border-2 border-pink-100 rounded-xl p-3 bg-gray-50 outline-none focus:border-pink-300"
+                placeholder="Ej: Punto, Moneda, Euro..." />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Ícono / Símbolo</label>
+              <div className="flex flex-wrap justify-center gap-1.5 p-2 bg-gray-50 rounded-xl border-2 border-gray-100">
+                {COIN_SYMBOLS.map(s => (
+                  <button key={s} onClick={() => setSymbol(s)}
+                    className={`text-2xl w-10 h-10 rounded-lg transition-all ${s === symbol ? 'bg-white shadow-sm border-2 border-pink-300 scale-110 z-10' : 'border-2 border-transparent opacity-60 hover:opacity-100'}`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-xs font-bold text-gray-500 mb-3 uppercase">Color mágico</label>
+              <div className="flex flex-wrap justify-center gap-2">
+                {COIN_COLORS.map(c => (
+                  <button key={c.name} onClick={() => setColor(c)}
+                    className={`w-10 h-10 rounded-full border-2 transition-transform ${c.bg} ${color.name === c.name ? 'border-gray-800 scale-110 shadow-lg' : 'border-transparent'}`}
+                  />
+                ))}
+              </div>
+            </div>
+            <button onClick={() => updateState({ isSetup: true, coinName: name || 'Moneda', coinColor: color, coinSymbol: symbol })}
+              className="w-full py-3 rounded-xl text-lg font-black text-white bg-pink-500 active:scale-95 transition-all shadow-md">
+              ¡Comenzar! 🚀
+            </button>
+            <button onClick={onLogout}
+              className="w-full mt-3 py-3 rounded-xl text-sm font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all">
+              Volver / Cambiar Código
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function HabitsTab({ gameState, updateState, onAdd, onEdit }) {
+      const [draggedHabit, setDraggedHabit] = useState(null);
+      const [dragOverId, setDragOverId] = useState(null);
+      const currentHabitDay = getHabitDayKey();
+      const habitProgress = gameState.habitProgress || {};
+      const getProgress = (habit) => getActiveProgressEntry(habitProgress[habit.id], habit, gameState.habitProgressDay);
+
+      const saveHabitProgress = (habit, entry) => {
+        const nextProgress = { ...habitProgress };
+        if (entry.count > 0) nextProgress[habit.id] = entry;
+        else delete nextProgress[habit.id];
+        updateState({ habitProgress: nextProgress, habitProgressDay: currentHabitDay });
+      };
+
+      const incrementHabitProgress = (habit) => {
+        const entry = getProgress(habit);
+        saveHabitProgress(habit, { ...entry, count: entry.count + 1, history: [...entry.history, Date.now()] });
+      };
+
+      const decrementHabitProgress = (habit) => {
+        const entry = getProgress(habit);
+        if (!entry.count) return;
+        saveHabitProgress(habit, { ...entry, count: entry.count - 1, history: entry.history.slice(0, -1) });
+      };
+
+      const toggleHabitProgress = (habit) => {
+        const entry = getProgress(habit);
+        if (entry.count) saveHabitProgress(habit, { ...entry, count: 0, history: [] });
+        else incrementHabitProgress(habit);
+      };
+
+      const handleHabitClick = (habit) => {
+        const change = habit.type === 'good' ? habit.amount : -habit.amount;
+        updateState(
+          { balance: gameState.balance + change }, 
+          habit.type === 'good' ? `¡Sumaste ${habit.amount} ${gameState.coinName}!` : `Restaste ${habit.amount} ${gameState.coinName}`
+        );
+      };
+      
+      const deleteHabit = (id) => {
+        const nextProgress = { ...habitProgress };
+        delete nextProgress[id];
+        updateState(
+          { habits: gameState.habits.filter(h => h.id !== id), habitProgress: nextProgress, habitProgressDay: currentHabitDay },
+          "Hábito eliminado"
+        );
+      }
+
+      const reorderHabits = (draggedId, targetId) => {
+        if (!draggedId || draggedId === targetId) return;
+
+        const dragged = gameState.habits.find(h => h.id === draggedId);
+        const target = gameState.habits.find(h => h.id === targetId);
+        if (!dragged || !target || dragged.type !== target.type) return;
+
+        const reordered = [...gameState.habits];
+        const fromIndex = reordered.findIndex(h => h.id === draggedId);
+        reordered.splice(fromIndex, 1);
+        const targetIndex = reordered.findIndex(h => h.id === targetId);
+        reordered.splice(targetIndex, 0, dragged);
+        updateState({ habits: reordered });
+      };
+
+      const finishDrag = (targetId) => {
+        if (draggedHabit) reorderHabits(draggedHabit.id, targetId);
+        setDraggedHabit(null);
+        setDragOverId(null);
+      };
+
+      const getHabitIdAtPoint = (x, y) => {
+        const target = document.elementFromPoint(x, y)?.closest('[data-habit-id]');
+        return target?.dataset.habitId || null;
+      };
+
+      const handleTouchMove = (event, habit) => {
+        const targetId = getHabitIdAtPoint(event.clientX, event.clientY);
+        const target = gameState.habits.find(h => h.id === targetId);
+        setDragOverId(target?.type === habit.type ? targetId : null);
+      };
+
+      const handleTouchEnd = (event, habit) => {
+        const targetId = getHabitIdAtPoint(event.clientX, event.clientY);
+        const target = gameState.habits.find(h => h.id === targetId);
+        if (target?.type === habit.type) reorderHabits(habit.id, targetId);
+        setDraggedHabit(null);
+        setDragOverId(null);
+      };
+
+      const goodHabits = gameState.habits.filter(h => h.type === 'good');
+      const badHabits = gameState.habits.filter(h => h.type === 'bad');
+
+      return (
+        <div className="space-y-6 animate-in fade-in duration-300 w-full min-w-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start w-full min-w-0">
+            <Section title="Buenos Hábitos (+)" color="text-emerald-500 dark:text-emerald-400">
+              {goodHabits.length === 0 && <EmptyState text="¡Agrega un buen hábito!" />}
+              <div className="grid gap-2 min-w-0">
+                {goodHabits.map(h => {
+                  const progress = getProgress(h);
+                  return <HabitCard key={h.id} habit={h} coinSymbol={gameState.coinSymbol} onClick={() => handleHabitClick(h)} onEdit={() => onEdit(h)} onDelete={() => deleteHabit(h.id)}
+                    progressCount={progress.count} lastProgressAt={progress.history[progress.history.length - 1]} onToggleProgress={() => toggleHabitProgress(h)} onIncreaseProgress={() => incrementHabitProgress(h)} onDecreaseProgress={() => decrementHabitProgress(h)}
+                    isDragging={draggedHabit?.id === h.id} isDragOver={dragOverId === h.id && draggedHabit?.id !== h.id}
+                    onDragStart={() => setDraggedHabit(h)} onDragOver={() => setDragOverId(h.id)} onDrop={() => finishDrag(h.id)} onDragEnd={() => { setDraggedHabit(null); setDragOverId(null); }}
+                    onTouchStart={(event) => { event.currentTarget.setPointerCapture(event.pointerId); setDraggedHabit(h); }} onTouchMove={(event) => handleTouchMove(event, h)} onTouchEnd={(event) => handleTouchEnd(event, h)} />;
+                })}
+              </div>
+            </Section>
+
+            <Section title="Malos Hábitos (-)" color="text-red-500 dark:text-red-400">
+              {badHabits.length === 0 && <EmptyState text="No hay malos hábitos." />}
+              <div className="grid gap-2 min-w-0">
+                {badHabits.map(h => {
+                  const progress = getProgress(h);
+                  return <HabitCard key={h.id} habit={h} coinSymbol={gameState.coinSymbol} onClick={() => handleHabitClick(h)} onEdit={() => onEdit(h)} onDelete={() => deleteHabit(h.id)}
+                    progressCount={progress.count} lastProgressAt={progress.history[progress.history.length - 1]} onToggleProgress={() => toggleHabitProgress(h)} onIncreaseProgress={() => incrementHabitProgress(h)} onDecreaseProgress={() => decrementHabitProgress(h)}
+                    isDragging={draggedHabit?.id === h.id} isDragOver={dragOverId === h.id && draggedHabit?.id !== h.id}
+                    onDragStart={() => setDraggedHabit(h)} onDragOver={() => setDragOverId(h.id)} onDrop={() => finishDrag(h.id)} onDragEnd={() => { setDraggedHabit(null); setDragOverId(null); }}
+                    onTouchStart={(event) => { event.currentTarget.setPointerCapture(event.pointerId); setDraggedHabit(h); }} onTouchMove={(event) => handleTouchMove(event, h)} onTouchEnd={(event) => handleTouchEnd(event, h)} />;
+                })}
+              </div>
+            </Section>
+          </div>
+
+          <button onClick={onAdd} className="w-full py-3 border-2 border-dashed border-sky-300 dark:border-slate-600 text-sky-600 dark:text-sky-400 rounded-2xl font-bold hover:bg-sky-100/50 dark:hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <Plus className="w-5 h-5" /> Nuevo Hábito
+          </button>
+        </div>
+      );
+    }
+
+    function ShopTab({ gameState, onAdd, onEdit, onDelete, onBuy }) {
+      const checkCanAffordMin = (r) => {
+        const minCost = r.isTimeBased ? (r.minPurchaseTime / r.timeUnit) * r.costPerUnit : r.cost * r.minPurchase;
+        return gameState.balance >= minCost;
+      };
+
+      return (
+        <div className="space-y-4 animate-in fade-in duration-300">
+          <div className="text-center mb-6 mt-2">
+            <h2 className="text-2xl font-black text-pink-500 dark:text-pink-400 mb-1">Tienda 🎁</h2>
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Intercambia tus {gameState.coinName}s.</p>
+          </div>
+
+          {gameState.rewards.length === 0 && <EmptyState text="La tienda está vacía. ¡Crea premios!" />}
+
+          <div className="grid grid-cols-2 gap-3">
+            {gameState.rewards.map(reward => (
+              <RewardCard key={reward.id} reward={reward} coinName={gameState.coinName} coinSymbol={gameState.coinSymbol}
+                canAfford={checkCanAffordMin(reward)} onBuy={() => checkCanAffordMin(reward) && onBuy(reward)}
+                onEdit={() => onEdit(reward)} onDelete={() => onDelete(reward.id)}
+              />
+            ))}
+          </div>
+
+          <button onClick={onAdd} className="w-full mt-2 py-3 border-2 border-dashed border-pink-300 dark:border-pink-800 text-pink-600 dark:text-pink-400 rounded-2xl font-bold hover:bg-pink-50 dark:hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <Plus className="w-5 h-5" /> Nuevo Premio
+          </button>
+        </div>
+      );
+    }
+
+    function BackpackTab({ gameState, updateState }) {
+      const updateItemQty = (rewardId, amountToSubtract) => {
+        let newInv = [...gameState.inventory];
+        const index = newInv.findIndex(i => i.rewardId === rewardId);
+        if (index >= 0) {
+          newInv[index].quantity -= amountToSubtract;
+          if (newInv[index].quantity <= 0) {
+            newInv.splice(index, 1);
+          }
+          updateState(
+            { inventory: newInv },
+            amountToSubtract > 1 ? `Gastaste ${amountToSubtract} minutos` : 'Premio utilizado'
+          );
+        }
+      };
+
+      return (
+        <div className="space-y-4 animate-in fade-in duration-300">
+          <div className="text-center mb-6 mt-2">
+            <h2 className="text-2xl font-black text-amber-500 dark:text-amber-400 mb-1">Mochila 🎒</h2>
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Premios acumulados para usar.</p>
+          </div>
+
+          {gameState.inventory.length === 0 ? (
+            <EmptyState text="Tu mochila está vacía." />
+          ) : (
+            <div className="grid gap-3">
+              {gameState.inventory.map(item => {
+                const reward = gameState.rewards.find(r => r.id === item.rewardId);
+                if (!reward) return null;
+                
+                return (
+                  <div key={item.rewardId} className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border-2 border-amber-100 dark:border-slate-700 flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="text-3xl bg-amber-50 dark:bg-slate-700 w-12 h-12 rounded-xl flex items-center justify-center border border-amber-100 dark:border-slate-600 shadow-inner">
+                        {reward.emoji}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-gray-800 dark:text-gray-100">{reward.name}</h3>
+                        <p className="text-amber-600 dark:text-amber-400 font-bold bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 rounded inline-block text-xs mt-1">
+                          Tienes: {item.quantity} {reward.isTimeBased ? 'minutos' : 'disponibles'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2 justify-end">
+                      {reward.isTimeBased && (
+                        <button 
+                          onClick={() => updateItemQty(item.rewardId, 5)}
+                          disabled={item.quantity < 5}
+                          className="bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white px-3 py-1.5 text-sm rounded-xl font-bold flex-1 transition-colors active:scale-95"
+                        >
+                          - 5 min
+                        </button>
+                      )}
+                      <button 
+                        onClick={() => updateItemQty(item.rewardId, reward.isTimeBased ? item.quantity : 1)}
+                        className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1 transition-colors active:scale-95"
+                        title={reward.isTimeBased ? "Gastar todo" : "Usar 1"}
+                      >
+                        <Check className="w-4 h-4" /> {reward.isTimeBased ? 'Gastar Todo' : 'Usar 1'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function SettingsTab({ gameState, updateState, onLogout }) {
+      return (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="text-center mb-6 mt-2">
+            <h2 className="text-2xl font-black text-gray-500 dark:text-gray-300 mb-1">Ajustes ⚙️</h2>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
+            <span className="font-bold text-gray-700 dark:text-gray-200">Modo Oscuro</span>
+            <button 
+              onClick={() => updateState({ theme: gameState.theme === 'dark' ? 'light' : 'dark' })}
+              className="p-2 bg-gray-100 dark:bg-slate-700 rounded-xl transition-transform active:scale-90"
+            >
+              {gameState.theme === 'dark' ? <Moon className="w-5 h-5 text-indigo-400" /> : <Sun className="w-5 h-5 text-amber-500" />}
+            </button>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+            <span className="font-bold text-gray-700 dark:text-gray-200 block mb-3">Tamaño de la interfaz</span>
+            <div className="flex gap-2">
+              {[{ label: 'Pequeño', val: 0.85 }, { label: 'Normal', val: 1.0 }, { label: 'Grande', val: 1.15 }].map(s => (
+                <button 
+                  key={s.label}
+                  onClick={() => updateState({ uiScale: s.val })}
+                  className={`flex-1 p-2 rounded-xl text-sm font-bold border-2 transition-all ${gameState.uiScale === s.val ? 'bg-sky-100 border-sky-400 text-sky-700 dark:bg-sky-900/40 dark:border-sky-500 dark:text-sky-300' : 'border-transparent bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400'}`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <button 
+            onClick={onLogout}
+            className="w-full py-4 mt-2 rounded-2xl font-black text-red-500 bg-red-50 dark:bg-red-900/20 border-2 border-red-100 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/40 active:scale-95 transition-all"
+          >
+            Cerrar Sesión / Cambiar Código
+          </button>
+        </div>
+      );
+    }
+
+    function HabitModal({ habit, coinName, onClose, onSave }) {
+      const isEditing = !!habit;
+      const [name, setName] = useState(habit?.name || '');
+      const [type, setType] = useState(habit?.type || 'good'); 
+      const [timeBased, setTimeBased] = useState(habit?.timeBased || false);
+      const [timeUnit, setTimeUnit] = useState(habit?.timeUnit || 25);
+      const [amount, setAmount] = useState(habit?.amount || 1);
+      const [isWeeklyTracking, setIsWeeklyTracking] = useState(habit?.trackingMode === 'weekly');
+      const [weeklyResetMode, setWeeklyResetMode] = useState(habit?.weeklyResetMode || 'weekday');
+      const [weeklyResetDay, setWeeklyResetDay] = useState(habit?.weeklyResetDay ?? 1);
+
+      return (
+        <Modal onClose={onClose} title={isEditing ? "Editar Hábito" : "Nuevo Hábito"}>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Nombre</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Ej: Leer, Aseo..." autoFocus className="input-std" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Tipo</label>
+              <div className="flex gap-2">
+                <button onClick={() => setType('good')} className={`toggle-btn ${type === 'good' ? 'active-green' : 'inactive'}`}>Bueno (+)</button>
+                <button onClick={() => setType('bad')} className={`toggle-btn ${type === 'bad' ? 'active-red' : 'inactive'}`}>Malo (-)</button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Modalidad</label>
+              <div className="flex gap-2">
+                <button onClick={() => setTimeBased(false)} className={`toggle-btn ${!timeBased ? 'active-blue' : 'inactive'}`}>Por Vez</button>
+                <button onClick={() => setTimeBased(true)} className={`toggle-btn ${timeBased ? 'active-blue' : 'inactive'}`}>Por Tiempo</button>
+              </div>
+            </div>
+            {timeBased && (
+              <div className="bg-sky-50 dark:bg-slate-700/50 p-3 rounded-xl border border-sky-100 dark:border-slate-600 flex items-center justify-between">
+                <span className="text-sm font-bold text-gray-600 dark:text-gray-300">Minutos a realizar:</span>
+                <input type="number" min="1" value={timeUnit} onChange={e => setTimeUnit(Number(e.target.value))} className="w-16 p-2 text-center rounded bg-white dark:bg-slate-800 border dark:border-slate-600 text-sm font-bold" />
+              </div>
+            )}
+            <div className="bg-violet-50 dark:bg-slate-700/50 p-3 rounded-xl border border-violet-100 dark:border-slate-600">
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 cursor-pointer">
+                <input type="checkbox" checked={isWeeklyTracking} onChange={e => setIsWeeklyTracking(e.target.checked)} className="w-4 h-4 accent-violet-500" />
+                Es un hábito de seguimiento semanal
+              </label>
+              {!isWeeklyTracking && <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-2">Los hábitos diarios se reinician todos los días a las 6:00 AM.</p>}
+            </div>
+            {isWeeklyTracking && (
+              <div className="bg-violet-50/70 dark:bg-slate-700/30 p-3 rounded-xl border border-violet-100 dark:border-slate-600">
+                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Reinicio del seguimiento</label>
+                <select value={weeklyResetMode === 'manual' ? 'manual' : weeklyResetDay} onChange={e => {
+                  if (e.target.value === 'manual') setWeeklyResetMode('manual');
+                  else { setWeeklyResetMode('weekday'); setWeeklyResetDay(Number(e.target.value)); }
+                }} className="input-std text-sm">
+                  {WEEKDAY_OPTIONS.map(day => <option key={day.value} value={day.value}>Cada {day.label}</option>)}
+                  <option value="manual">Manual</option>
+                </select>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-2">
+                  {weeklyResetMode === 'manual' ? 'Se conserva hasta que destildes el hábito o lleves el contador a cero.' : 'Se reinicia a las 6:00 AM del día elegido.'}
+                </p>
+              </div>
+            )}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Cantidad de {coinName}s de impacto</label>
+              <input type="number" min="1" value={amount} onChange={e => setAmount(Number(e.target.value))} className="input-std text-center text-lg" />
+            </div>
+            <button onClick={() => name.trim() && onSave({ name, type, timeBased, timeUnit: timeBased ? timeUnit : null, amount,
+              trackingMode: isWeeklyTracking ? 'weekly' : 'daily', weeklyResetMode: isWeeklyTracking ? weeklyResetMode : null, weeklyResetDay: isWeeklyTracking && weeklyResetMode !== 'manual' ? weeklyResetDay : null
+            })} className="btn-primary mt-2">
+              {isEditing ? "Guardar Cambios" : "Guardar Hábito"}
+            </button>
+          </div>
+        </Modal>
+      );
+    }
+
+    function AddRewardModal({ reward, coinName, onClose, onSave }) {
+      const isEditing = Boolean(reward);
+      const [name, setName] = useState(reward?.name || '');
+      const [emoji, setEmoji] = useState(reward?.emoji || EMOJIS[0]);
+      const [isTimeBased, setIsTimeBased] = useState(reward?.isTimeBased || false);
+      const [cost, setCost] = useState(reward?.cost ?? 1);
+      const [minPurchase, setMinPurchase] = useState(reward?.minPurchase ?? 1);
+      const [timeUnit, setTimeUnit] = useState(reward?.timeUnit ?? 5);
+      const [costPerUnit, setCostPerUnit] = useState(reward?.costPerUnit ?? 1);
+      const [minPurchaseTime, setMinPurchaseTime] = useState(reward?.minPurchaseTime ?? 20); 
+
+      return (
+        <Modal onClose={onClose} title={isEditing ? "Editar Premio" : "Nuevo Premio"}>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Ícono</label>
+              <div className="flex flex-wrap gap-1 justify-center bg-gray-50 dark:bg-slate-700/30 p-2 rounded-xl h-24 overflow-y-auto border border-gray-100 dark:border-slate-700">
+                {EMOJIS.map(e => (
+                  <button key={e} onClick={() => setEmoji(e)} className={`text-2xl w-10 h-10 rounded-lg transition-transform ${emoji === e ? 'bg-pink-200 dark:bg-pink-900/50 shadow scale-110' : ''}`}>{e}</button>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Nombre</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} className="input-std" placeholder="Ej: Jugar Minecraft" />
+            </div>
+
+            <div className="bg-pink-50 dark:bg-slate-700/50 p-3 rounded-xl border border-pink-100 dark:border-slate-600">
+               <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 cursor-pointer">
+                 <input type="checkbox" checked={isTimeBased} onChange={e => setIsTimeBased(e.target.checked)} className="w-4 h-4 accent-pink-500" />
+                 ¿Es un premio por tiempo? (Ej. Minutos)
+               </label>
+            </div>
+
+            {isTimeBased ? (
+              <div className="grid grid-cols-2 gap-3 bg-gray-50 dark:bg-slate-700/30 p-3 rounded-xl">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Minutos x Unidad</label>
+                  <input type="number" min="1" value={timeUnit} onChange={e => setTimeUnit(Number(e.target.value))} className="input-std text-sm" />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Costo ({coinName}s)</label>
+                  <input type="number" min="1" value={costPerUnit} onChange={e => setCostPerUnit(Number(e.target.value))} className="input-std text-sm" />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Compra Mínima (En Minutos)</label>
+                  <input type="number" min="1" value={minPurchaseTime} onChange={e => setMinPurchaseTime(Number(e.target.value))} className="input-std text-sm" />
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Costo</label>
+                  <input type="number" min="1" value={cost} onChange={e => setCost(Number(e.target.value))} className="input-std" />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Compra Mínima</label>
+                  <input type="number" min="1" value={minPurchase} onChange={e => setMinPurchase(Number(e.target.value))} className="input-std" />
+                </div>
+              </div>
+            )}
+
+            <button 
+              onClick={() => name.trim() && onSave({ 
+                name, emoji, isTimeBased, 
+                cost: isTimeBased ? null : cost,
+                minPurchase: isTimeBased ? null : minPurchase,
+                timeUnit: isTimeBased ? timeUnit : null,
+                costPerUnit: isTimeBased ? costPerUnit : null,
+                minPurchaseTime: isTimeBased ? minPurchaseTime : null
+              })} 
+              className="btn-pink mt-2"
+            >
+              {isEditing ? "Guardar Cambios" : "Guardar Premio"}
+            </button>
+          </div>
+        </Modal>
+      );
+    }
+
+    function PurchaseModal({ modal, coinName, balance, onClose, setQty, onConfirm }) {
+      const { reward, qty } = modal;
+      const isTime = reward.isTimeBased;
+      const step = isTime ? reward.timeUnit : 1;
+      const minQty = isTime ? reward.minPurchaseTime : reward.minPurchase;
+      const totalCost = isTime ? (qty / reward.timeUnit) * reward.costPerUnit : qty * reward.cost;
+      const canAfford = balance >= totalCost;
+
+      return (
+        <Modal onClose={onClose} title="">
+           <div className="text-center">
+              <div className="text-5xl mb-2 bg-gray-50 dark:bg-slate-700 w-20 h-20 mx-auto flex items-center justify-center rounded-2xl border-2 border-gray-100 dark:border-slate-600 shadow-inner">
+                {reward.emoji}
+              </div>
+              <h2 className="text-xl font-black text-gray-800 dark:text-gray-100 mb-1">{reward.name}</h2>
+              
+              <div className="bg-sky-50 dark:bg-slate-700/50 rounded-xl p-3 my-4">
+                <p className="font-bold text-gray-500 dark:text-gray-300 text-xs uppercase mb-2">
+                  ¿Cuánto vas a comprar? {isTime && '(Minutos)'}
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                   <button onClick={() => setQty(Math.max(minQty, qty - step))} disabled={qty <= minQty} className="w-10 h-10 bg-white dark:bg-slate-600 rounded-full font-black text-xl shadow border border-gray-100 dark:border-slate-500 active:scale-90 flex items-center justify-center dark:text-white disabled:opacity-50">-</button>
+                   <span className="text-2xl font-black w-20 dark:text-white">
+                     {qty} {isTime && <span className="text-sm">m</span>}
+                   </span>
+                   <button onClick={() => setQty(qty + step)} className="w-10 h-10 bg-white dark:bg-slate-600 rounded-full font-black text-xl shadow border border-gray-100 dark:border-slate-500 active:scale-90 flex items-center justify-center dark:text-white">+</button>
+                </div>
+                {minQty > 1 && (
+                  <p className="text-xs text-sky-600 dark:text-sky-400 font-bold mt-2">Mínimo: {minQty} {isTime ? 'minutos' : 'unidades'}</p>
+                )}
+              </div>
+
+              <div className={`p-3 rounded-xl border-2 mb-4 flex items-center justify-between ${canAfford ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800'}`}>
+                 <span className="font-bold text-gray-600 dark:text-gray-300 text-sm">A pagar:</span>
+                 <div className="flex items-center gap-1">
+                   <span className={`text-xl font-black ${canAfford ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>{totalCost}</span>
+                   <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">{coinName}s</span>
+                 </div>
+              </div>
+
+              <div className="flex gap-2">
+                 <button onClick={onClose} className="flex-1 py-3 font-bold text-gray-500 bg-gray-100 dark:bg-slate-700 dark:text-gray-300 rounded-xl active:scale-95 text-sm">Cancelar</button>
+                 <button onClick={onConfirm} disabled={!canAfford} className={`flex-1 py-3 font-black text-white rounded-xl active:scale-95 text-sm shadow ${canAfford ? 'bg-pink-500' : 'bg-gray-300 dark:bg-slate-600 opacity-50 cursor-not-allowed'}`}>
+                   ¡Comprar!
+                 </button>
+              </div>
+           </div>
+        </Modal>
+      );
+    }
+
+    function NavButton({ active, onClick, icon, text, color, badge }) {
+      return (
+        <button onClick={onClick} className={`relative flex flex-col items-center justify-center w-16 h-14 rounded-xl transition-all ${active ? 'bg-sky-50 dark:bg-slate-700 scale-105' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'}`}>
+          <div className={`${active ? color : 'text-gray-400 dark:text-gray-500'} transition-colors`}>{icon}</div>
+          <span className={`text-[9px] font-black mt-0.5 ${active ? color : 'text-gray-400 dark:text-gray-500'}`}>{text}</span>
+          {badge > 0 && <span className="absolute top-0 right-1 bg-red-500 text-white text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full border border-white dark:border-slate-800">{badge}</span>}
+        </button>
+      );
+    }
+
+    function Section({ title, color, children }) {
+      return (
+        <section>
+          <h2 className={`text-lg font-black ${color} mb-2 ml-1`}>{title}</h2>
+          {children}
+        </section>
+      );
+    }
+
+    function HabitCard({ habit, coinSymbol, onClick, onEdit, onDelete, progressCount, lastProgressAt, onToggleProgress, onIncreaseProgress, onDecreaseProgress, isDragging, isDragOver, onDragStart, onDragOver, onDrop, onDragEnd, onTouchStart, onTouchMove, onTouchEnd }) {
+      const isGood = habit.type === 'good';
+      const colorClass = isGood ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-300';
+      const btnClass = isGood ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white';
+      const trackingText = habit.trackingMode === 'weekly' ? (habit.weeklyResetMode === 'manual' ? ' · Semanal manual' : ' · Semanal') : '';
+      const progressTimestamp = formatProgressTimestamp(lastProgressAt, habit.trackingMode === 'weekly');
+      
+      return (
+        <div data-habit-id={habit.id} draggable onDragStart={(event) => { event.dataTransfer.effectAllowed = 'move'; onDragStart(); }} onDragOver={(event) => { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; onDragOver(); }} onDrop={(event) => { event.preventDefault(); onDrop(); }} onDragEnd={onDragEnd}
+          className={`p-3 rounded-2xl border-2 flex items-center justify-between shadow-sm min-w-0 transition-all ${isDragging ? 'opacity-50' : ''} ${isDragOver ? 'ring-2 ring-sky-400 ring-offset-2 dark:ring-offset-slate-900' : ''} ${colorClass}`}>
+          <div className="flex-1 min-w-0 pr-2">
+            <h3 className="font-bold text-sm leading-tight truncate" title={habit.name}>{habit.name}</h3>
+            <p className="text-xs opacity-80 mt-0.5 truncate">{habit.timeBased ? `Cada ${habit.timeUnit} min` : 'Por vez'}{trackingText}</p>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button onClick={onClick} className={`flex items-center gap-1 ${btnClass} px-3 py-2 rounded-xl font-black active:scale-90 transition-transform shadow-sm`}>
+              {isGood ? <Plus className="w-4 h-4" /> : <Minus className="w-4 h-4" />}
+              <span className="flex items-center gap-0.5">{habit.amount} <span className="text-[10px]">{coinSymbol}</span></span>
+            </button>
+            <div className="flex flex-col items-end gap-0.5">
+              <div className="flex items-center gap-0.5 rounded-lg border border-black/10 dark:border-white/10 p-0.5 bg-white/40 dark:bg-black/10">
+                <button type="button" title={progressCount ? "Quitar tilde" : "Marcar como hecho"} aria-label={progressCount ? `Quitar tilde de ${habit.name}` : `Marcar ${habit.name} como hecho`} onClick={onToggleProgress}
+                  className={`w-6 h-6 rounded-md flex items-center justify-center active:scale-90 transition-all ${progressCount ? btnClass : 'bg-white/70 dark:bg-slate-700/70 text-gray-400 dark:text-gray-500'}`}>
+                  <Check className="w-3.5 h-3.5" />
+                </button>
+                <button type="button" title="Restar al contador" aria-label={`Restar al contador de ${habit.name}`} onClick={onDecreaseProgress} disabled={!progressCount}
+                  className="w-5 h-6 rounded-md flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed active:scale-90 transition-all">
+                  <Minus className="w-3 h-3" />
+                </button>
+                <span className="w-4 text-center text-[11px] leading-6 font-black tabular-nums" aria-label={`${progressCount} veces hecho`}>{progressCount}</span>
+                <button type="button" title="Sumar al contador" aria-label={`Sumar al contador de ${habit.name}`} onClick={onIncreaseProgress}
+                  className="w-5 h-6 rounded-md flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/10 active:scale-90 transition-all">
+                  <Plus className="w-3 h-3" />
+                </button>
+              </div>
+              {progressTimestamp && <span className="text-[9px] leading-none font-bold opacity-75 whitespace-nowrap">{progressTimestamp}</span>}
+            </div>
+            <div className="flex items-center gap-1 border-l-2 pl-1.5 border-black/10 dark:border-white/10">
+              <button type="button" aria-label={`Arrastrar ${habit.name}`} onPointerDown={onTouchStart} onPointerMove={onTouchMove} onPointerUp={onTouchEnd} onPointerCancel={onDragEnd} className="p-1 text-gray-400 dark:text-gray-500 hover:text-sky-500 transition-colors bg-white/50 dark:bg-black/20 rounded-md touch-none cursor-grab active:cursor-grabbing"><GripVertical className="w-3.5 h-3.5" /></button>
+              <div className="flex flex-col gap-1">
+                <button onClick={onEdit} className="p-1 text-gray-400 dark:text-gray-500 hover:text-sky-500 transition-colors bg-white/50 dark:bg-black/20 rounded-md"><Edit3 className="w-3.5 h-3.5" /></button>
+                <button onClick={onDelete} className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors bg-white/50 dark:bg-black/20 rounded-md"><Trash2 className="w-3.5 h-3.5" /></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function RewardCard({ reward, coinName, coinSymbol, canAfford, onBuy, onEdit, onDelete }) {
+      return (
+        <div onClick={onBuy} className={`bg-white dark:bg-slate-800 border-2 border-pink-100 dark:border-pink-900/40 rounded-2xl p-3 flex flex-col items-center text-center transition-all shadow-sm relative ${canAfford ? 'cursor-pointer hover:border-pink-300 dark:hover:border-pink-700 active:scale-95' : 'opacity-60 grayscale cursor-not-allowed'}`}>
+          {!canAfford && <div className="absolute top-2 right-2 text-gray-400 dark:text-gray-500"><Lock size={14}/></div>}
+          {reward.isTimeBased && <div className="absolute top-2 left-2 text-sky-400"><Timer size={14}/></div>}
+          
+          <div className="text-3xl mb-2 bg-pink-50 dark:bg-slate-700 w-14 h-14 flex items-center justify-center rounded-full border border-gray-100 dark:border-slate-600 shadow-inner">
+            {reward.emoji}
+          </div>
+          <h3 className="font-bold text-gray-800 dark:text-gray-200 text-xs leading-tight mb-2 h-8 flex items-center">{reward.name}</h3>
+          <div className="bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 px-2 py-0.5 rounded-lg font-black text-[10px] w-full flex items-center justify-center gap-0.5">
+            {reward.isTimeBased ? `${reward.costPerUnit} ${coinSymbol} / ${reward.timeUnit}m` : `${reward.cost} ${coinSymbol} /u`}
+          </div>
+          <span className="text-[9px] text-gray-400 dark:text-gray-500 font-bold mt-1">
+            Mínimo: {reward.isTimeBased ? `${reward.minPurchaseTime} min` : reward.minPurchase}
+          </span>
+          <div className="flex w-full gap-2 mt-2">
+            <button onClick={(event) => { event.stopPropagation(); onEdit(); }} className="flex-1 p-1.5 rounded-lg text-[10px] font-black text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 hover:bg-sky-100 dark:hover:bg-sky-900/50 transition-colors flex items-center justify-center gap-1">
+              <Edit3 className="w-3.5 h-3.5" /> Editar
+            </button>
+            <button onClick={(event) => { event.stopPropagation(); onDelete(); }} className="flex-1 p-1.5 rounded-lg text-[10px] font-black text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors flex items-center justify-center gap-1">
+              <Trash2 className="w-3.5 h-3.5" /> Eliminar
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function EmptyState({ text }) {
+      return <div className="bg-white/50 dark:bg-slate-800/50 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-2xl p-6 text-center text-gray-400 text-sm font-bold">{text}</div>;
+    }
+
+    function Modal({ children, onClose, title }) {
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="absolute inset-0" onClick={onClose}></div>
+          <div className="relative bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm p-5 shadow-2xl border border-gray-100 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-black text-gray-800 dark:text-white">{title}</h2>
+              <button onClick={onClose} className="p-1.5 bg-gray-100 dark:bg-slate-700 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"><X className="w-4 h-4"/></button>
+            </div>
+            {children}
+          </div>
+          <style dangerouslySetInnerHTML={{__html: `
+            .input-std { width: 100%; padding: 0.75rem; background: #F9FAFB; border: 2px solid #F3F4F6; border-radius: 0.75rem; font-weight: bold; outline: none; transition: border 0.2s; color: #1F2937; }
+            .dark .input-std { background: #0F172A; border-color: #334155; color: #F8FAFC; }
+            .input-std:focus { border-color: #38BDF8; }
+            .toggle-btn { flex: 1; padding: 0.5rem; border-radius: 0.75rem; font-weight: bold; font-size: 0.875rem; border: 2px solid transparent; transition: all 0.2s; }
+            .toggle-btn.inactive { background: #F9FAFB; color: #9CA3AF; }
+            .dark .toggle-btn.inactive { background: #334155; color: #94A3B8; }
+            .active-green { background: #D1FAE5; border-color: #34D399; color: #065F46; }
+            .dark .active-green { background: rgba(16, 185, 129, 0.2); border-color: #059669; color: #6EE7B7; }
+            .active-red { background: #FEE2E2; border-color: #F87171; color: #991B1B; }
+            .dark .active-red { background: rgba(239, 68, 68, 0.2); border-color: #DC2626; color: #FCA5A5; }
+            .active-blue { background: #E0F2FE; border-color: #38BDF8; color: #0369A1; }
+            .dark .active-blue { background: rgba(14, 165, 233, 0.2); border-color: #0284C7; color: #7DD3FC; }
+            .btn-primary { width: 100%; padding: 0.75rem; border-radius: 0.75rem; font-weight: 900; color: white; background: #1F2937; transition: transform 0.1s; }
+            .dark .btn-primary { background: #334155; }
+            .btn-primary:active { transform: scale(0.95); }
+            .btn-pink { width: 100%; padding: 0.75rem; border-radius: 0.75rem; font-weight: 900; color: white; background: #EC4899; transition: transform 0.1s; }
+            .btn-pink:active { transform: scale(0.95); }
+          `}} />
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
