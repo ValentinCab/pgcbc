@@ -179,12 +179,10 @@
       const [toastMsg, setToastMsg] = useState(null);
       const undoTimeout = useRef(null);
       const localRecoveryDone = useRef(false);
-      const lastLocalChange = useRef(0);
 
       useEffect(() => {
         if (!isLoggedIn || !secretCode) return;
         localRecoveryDone.current = false;
-        lastLocalChange.current = 0;
         setIsLoading(true);
         
         // 1. Cargar local rápido
@@ -205,15 +203,6 @@
           clearTimeout(fallbackTimer);
           if (docSnap.exists) {
             const remoteData = docSnap.data();
-            const remoteChange = Number(remoteData.updatedAt) || 0;
-
-            // Ignoramos una respuesta anterior a una acción que acabamos de
-            // hacer, para que no pueda volver a mostrar una mochila vieja.
-            if (remoteChange < lastLocalChange.current) {
-              setIsLoading(false);
-              return;
-            }
-            lastLocalChange.current = remoteChange;
 
             let data = {
               ...remoteData,
@@ -233,14 +222,14 @@
             } : {};
             data = { ...data, ...progressSyncFields };
 
-            // Los premios creados por la versión anterior quedaban sólo en
-            // este navegador. Si aún existen localmente y Firebase tiene
-            // esos arreglos vacíos, los recuperamos una sola vez al ingresar.
+            // Migración de versiones anteriores: recuperamos datos locales sólo
+            // si esos campos todavía no existían en Firebase. Un arreglo vacío
+            // sí es un estado válido y no debe revivir datos viejos.
             const recoveredFields = {};
-            if (!localRecoveryDone.current && localState?.rewards?.length && !data.rewards?.length) {
+            if (!localRecoveryDone.current && localState?.rewards?.length && !Array.isArray(remoteData.rewards)) {
               recoveredFields.rewards = localState.rewards;
             }
-            if (!localRecoveryDone.current && localState?.inventory?.length && !data.inventory?.length) {
+            if (!localRecoveryDone.current && localState?.inventory?.length && !Array.isArray(remoteData.inventory)) {
               recoveredFields.inventory = localState.inventory;
             }
             localRecoveryDone.current = true;
@@ -253,9 +242,7 @@
 
             const fieldsToSync = { ...recoveredFields, ...progressSyncFields };
             if (Object.keys(fieldsToSync).length) {
-              const recoveryTime = Date.now();
-              lastLocalChange.current = recoveryTime;
-              db.collection('cuentas').doc(secretCode).set({ ...fieldsToSync, updatedAt: recoveryTime }, { merge: true })
+              db.collection('cuentas').doc(secretCode).set({ ...fieldsToSync, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
                 .catch(err => console.warn("No se pudo actualizar o recuperar el seguimiento:", err));
             }
           }
@@ -282,8 +269,6 @@
 
       const updateState = (updates, undoMessage = null) => {
         const newState = { ...gameState, ...updates };
-        const changeTime = Date.now();
-        lastLocalChange.current = changeTime;
 
         if (undoMessage) {
           setPastState(gameState); 
@@ -301,7 +286,7 @@
           localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(newState));
           // Guardamos sólo los campos cambiados, evitando que un estado viejo
           // de otra pestaña reescriba la mochila completa.
-          db.collection('cuentas').doc(secretCode).set({ ...updates, updatedAt: changeTime }, { merge: true })
+          db.collection('cuentas').doc(secretCode).set({ ...updates, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
             .catch(err => console.warn("Modo local activo:", err));
         }
       };
@@ -324,12 +309,10 @@
 
       const handleUndo = () => {
         if (pastState) {
-          const changeTime = Date.now();
-          lastLocalChange.current = changeTime;
           setGameState(pastState);
           if (isLoggedIn && secretCode) {
             localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(pastState));
-            db.collection('cuentas').doc(secretCode).set({ ...pastState, updatedAt: changeTime })
+            db.collection('cuentas').doc(secretCode).set({ ...pastState, updatedAt: firebase.firestore.FieldValue.serverTimestamp() })
               .catch(err => console.warn("Modo local activo:", err));
           }
           setPastState(null);
