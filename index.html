@@ -1,172 +1,1149 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mi glosario</title>
-  <style>
-    :root { --ink:#252522; --muted:#73736c; --paper:#f7f6f1; --line:#dedbd1; --accent:#42664d; --accent-soft:#e3ece3; --tag:#e9ebe5; --input:#fffefa; }
-    body.dark { --ink:#eeeee8; --muted:#b5b6af; --paper:#20221f; --line:#41443d; --accent:#a7c8a8; --accent-soft:#35473a; --tag:#313530; --input:#292c28; }
-    *{box-sizing:border-box} [hidden]{display:none!important} body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    button,input,textarea,select{font:inherit} button{cursor:pointer} .app{max-width:1300px;margin:auto;padding:28px 28px 56px}
-    header{display:flex;align-items:end;justify-content:space-between;gap:22px;padding:9px 0 26px;border-bottom:1px solid var(--line)}
-    .eyebrow{margin:0 0 4px;color:var(--accent);font-weight:750;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase}.title{margin:0;font-family:Georgia,serif;font-size:clamp(2rem,4vw,3.25rem);line-height:1}.sub{margin:9px 0 0;color:var(--muted)}
-    .header-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;justify-content:end}.add{border:0;border-radius:10px;background:var(--accent);color:#fff;padding:11px 16px;font-weight:700;box-shadow:0 3px 0 #27412f}.add:active{transform:translateY(2px);box-shadow:0 1px 0 #27412f}.header-button{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px 13px;font-weight:650}.header-button:hover{border-color:var(--accent);color:var(--accent)}
-    .tools{padding:22px 0 18px}.search{position:relative;max-width:700px}.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)} input[type="search"]{width:100%;border:1px solid var(--line);background:transparent;border-radius:11px;padding:13px 16px 13px 42px;outline:0}input[type="search"]:focus{border-color:#98b19c;box-shadow:0 0 0 3px #dce8de}
-    .filter-heading{display:flex;gap:9px;align-items:center;margin:18px 0 8px;color:var(--muted);font-size:.85rem}.filters{display:flex;flex-wrap:wrap;gap:7px}.chip{background:var(--tag);border:1px solid transparent;color:#555950;padding:6px 10px;border-radius:999px;font-size:.84rem}.chip:hover{border-color:#b6c3b6}.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}.clear{margin-left:auto;background:transparent;border:0;color:var(--accent);text-decoration:underline;font-size:.8rem}
-    .workspace{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:22px;align-items:stretch;height:max(370px,calc(100dvh - 276px))}.workspace>div:first-child{min-height:0;display:flex;flex-direction:column}.list-head{display:flex;align-items:center;justify-content:space-between;margin:8px 0 3px;color:var(--muted);font-size:.9rem}.terms{display:grid;min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-ms-overflow-style:none}.terms::-webkit-scrollbar,.preview::-webkit-scrollbar,.detail-shell::-webkit-scrollbar{display:none}.letter{font-family:Georgia,serif;font-weight:bold;font-size:1.1rem;color:var(--accent);padding:22px 3px 5px}.term{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;text-align:left;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);padding:13px 5px 13px 8px;transition:.16s ease}.term:hover,.term.active{background:var(--accent-soft);padding-left:14px}.term-title{font-family:Georgia,serif;font-weight:bold;font-size:1.15rem;transition:font-size .18s ease,color .18s ease}.term.active .term-title{font-size:1.38rem}.mini-tags{display:flex;flex-direction:column;gap:2px;align-items:end;margin-left:8px}.mini-tags span{color:var(--muted);font-size:.63rem;line-height:1.15}.preview{position:relative;min-height:0;height:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-ms-overflow-style:none;border-left:1px solid var(--line);padding-left:22px}.preview-top{padding:8px 0 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:start}.preview h2,.detail-shell h2{font-family:Georgia,serif;font-size:1.9rem;line-height:1.12;margin:0}.preview-body{padding:21px 0}.preview p,.mobile-detail-content p{margin:0 0 16px}.detail,.definition{white-space:pre-wrap;color:var(--ink)}.definition{margin:0 0 16px}.tag-list{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px}.tag{color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 8px;font-size:.72rem;font-weight:650}.edit{background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 9px;color:var(--accent);font-size:.84rem}.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:18px 0 3px}.gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.empty{grid-column:1/-1;padding:36px 12px;color:var(--muted);text-align:center}
-    dialog{border:0;border-radius:16px;padding:0;max-width:min(660px,calc(100% - 24px));width:100%;background:var(--paper);color:var(--ink);box-shadow:0 24px 80px rgba(0,0,0,.25)}dialog::backdrop{background:rgba(31,33,28,.43);backdrop-filter:blur(2px)}.modal{padding:23px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.modal h2{font-family:Georgia,serif;font-size:1.6rem;margin:0}.close{border:0;background:transparent;font-size:1.6rem;line-height:1;color:var(--muted)}label{display:block;font-weight:700;font-size:.88rem;margin:14px 0 5px}input:not([type=search]),textarea{width:100%;border:1px solid var(--line);color:var(--ink);border-radius:9px;background:var(--input);padding:10px 11px;outline:0}textarea{resize:vertical;min-height:105px}.rich-editor{width:100%;min-height:110px;border:1px solid var(--line);color:var(--ink);border-radius:0 0 9px 9px;background:var(--input);padding:10px 11px;outline:0;white-space:pre-wrap;overflow-wrap:anywhere}.rich-editor:focus{border-color:#98b19c;box-shadow:0 0 0 3px #dce8de}.rich-editor:empty:before{content:attr(data-placeholder);color:var(--muted);pointer-events:none}.editor-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:6px;border:1px solid var(--line);border-bottom:0;border-radius:9px 9px 0 0;background:var(--tag)}.editor-toolbar button{min-width:29px;height:28px;padding:2px 6px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--ink);font-size:.82rem}.editor-toolbar button:hover{border-color:var(--line);background:var(--paper)}.editor-toolbar .toolbar-divider{width:1px;height:21px;background:var(--line);margin:0 2px}.color-palette{display:flex;align-items:center;gap:4px}.editor-toolbar .color-swatch{min-width:19px;width:19px;height:19px;padding:0;border:2px solid var(--paper);border-radius:999px;box-shadow:0 0 0 1px var(--line)}.editor-toolbar .color-swatch:hover{transform:scale(1.12);border-color:var(--paper)}.formula-trigger{font-family:Georgia,serif;font-weight:700}.formula-inline{display:inline-block;vertical-align:middle;margin:0 .13em;padding:.04em .17em;border-radius:5px;background:var(--accent-soft);cursor:pointer}.formula-inline:hover{outline:1px solid var(--accent)}.formula-shortcuts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.formula-shortcuts button{min-width:42px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:var(--tag);color:var(--ink);font-family:Georgia,serif;font-weight:700}.formula-shortcuts button:hover{border-color:var(--accent);color:var(--accent)}#formulaField{display:block;min-height:92px;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--input);padding:12px;font-size:1.22rem}#formulaField:focus{border-color:#98b19c;box-shadow:0 0 0 3px #dce8de}.formula-modal .hint{margin-bottom:8px}.hint{font-size:.78rem;margin:5px 0 0;color:var(--muted)}.image-picker{margin-top:14px}.image-preview-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}.image-preview-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;border:1px solid var(--line)}.modal-footer{margin-top:21px;display:flex;justify-content:flex-end;gap:9px}.secondary{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:10px 13px}.save{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:10px 14px;font-weight:700}.delete{margin-right:auto;color:#ae453c;border-color:#e7c0bc}.no-results{padding:20px 0;color:var(--muted)}
-    .flash-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}.flash-options label{display:flex;align-items:center;gap:7px;margin:0;padding:8px 9px;border:1px solid var(--line);border-radius:8px;font-weight:500;font-size:.83rem}.flash-options input{width:auto;padding:0}.flash-all{display:flex;align-items:center;gap:8px;margin:3px 0 8px!important}.flash-all input{width:auto;padding:0}.flash-order{display:grid;gap:7px;margin-top:9px}.flash-order label{display:flex;align-items:center;gap:8px;margin:0;font-weight:500}.flash-order input{width:auto;padding:0}.setup-overlay,.study-overlay,.detail-overlay{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:12px;background:rgba(31,33,28,.48);backdrop-filter:blur(2px)}.setup-shell,.study-shell{width:min(720px,100%);max-height:calc(100vh - 24px);overflow:auto;border-radius:16px;background:var(--paper);color:var(--ink);box-shadow:0 24px 80px rgba(0,0,0,.25)}.detail-shell{position:relative;width:min(720px,calc(100% - 28px));max-height:calc(100dvh - 36px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-ms-overflow-style:none;border-radius:18px;background:var(--paper);color:var(--ink);box-shadow:0 24px 80px rgba(0,0,0,.32)}.detail-shell>.close{position:absolute;right:16px;top:15px;z-index:1}.mobile-detail-content{padding:25px}.mobile-detail-content .preview-body{padding:21px 0 6px}.study{padding:22px}.study-top{display:flex;justify-content:space-between;align-items:center;gap:10px}.study-top p{margin:0;color:var(--muted);font-size:.85rem}.flashcard{width:100%;min-height:300px;margin:21px 0 16px;border:1px solid var(--line);border-radius:15px;background:transparent;color:var(--ink);padding:28px;display:grid;place-items:center;text-align:center;cursor:pointer}.flashcard:hover{border-color:var(--accent)}.flashcard small{color:var(--accent);font-weight:750;letter-spacing:.11em;text-transform:uppercase}.flashcard h2{font-family:Georgia,serif;font-size:clamp(1.75rem,5vw,2.75rem);line-height:1.2;margin:11px 0 0}.flashcard .answer{font-size:1.08rem;max-width:560px;text-align:left}.flashcard .answer div{white-space:pre-wrap}.flashcard .answer .extra-answer{margin-top:17px;padding-top:17px;border-top:1px solid var(--line);font-size:.98rem}.flashcard .tap{margin-top:18px;color:var(--muted);font-size:.8rem}.view-image{margin-top:18px;background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:9px;padding:8px 11px;font-weight:700}.study-controls{display:flex;justify-content:space-between;gap:9px}.study-controls div{display:flex;gap:9px}.study-empty{padding:25px 0;color:var(--muted)}.image-overlay{position:fixed;inset:0;z-index:1100;display:grid;place-items:center;padding:24px;background:rgba(18,20,17,.76)}.image-shell{position:relative;width:min(1000px,100%);max-height:calc(100vh - 48px);overflow:auto;padding:30px;border-radius:14px;background:var(--paper)}.image-shell .close{position:absolute;right:13px;top:12px}.study-images{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.study-images img{width:100%;max-height:72vh;object-fit:contain;border-radius:8px;border:1px solid var(--line);background:var(--input)}
-    @media(min-width:761px){html,body{height:100%;overflow:hidden}.app{height:100dvh;padding:12px 28px;display:flex;flex-direction:column;overflow:hidden}header{gap:11px;padding:0 0 9px}.title{font-size:2.1rem}.sub{margin-top:2px;font-size:.82rem}.header-actions{gap:6px}.header-button{padding:6px 9px;font-size:.8rem}.add{padding:7px 11px;font-size:.82rem}.tools{padding:9px 0 5px}.search{max-width:540px}input[type="search"]{padding:8px 12px 8px 35px;font-size:.84rem}.search svg{left:11px;width:17px}.filter-heading{margin:7px 0 4px;font-size:.74rem}.filters{gap:4px}.chip{padding:3px 7px;font-size:.7rem}header,.tools{flex:none}.workspace{height:auto;min-height:0;flex:1}}
-    @keyframes detail-overlay-in{from{opacity:0}to{opacity:1}}@keyframes detail-shell-in{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-    @media(max-width:760px){.app{padding:19px 16px 36px}header{align-items:start;flex-direction:column;padding-bottom:20px}.header-actions,.add{width:100%}.header-button{flex:1}.workspace{grid-template-columns:1fr;gap:16px;height:auto}.workspace>div:first-child{display:block}.terms{display:grid;overflow:visible;padding-right:0}.preview{display:none}.detail-overlay:not([hidden]){animation:detail-overlay-in .12s ease-out both}.detail-overlay:not([hidden]) .detail-shell{animation:detail-shell-in .18s cubic-bezier(.2,.8,.2,1) both}.mobile-detail-content{padding:22px}.detail-shell h2{font-size:1.55rem}.term{padding:12px 5px}.mini-tags{display:flex;margin:0 10px 0 10px;align-items:end}.mini-tags span{font-size:.56rem;line-height:1.2;white-space:nowrap}.term.focused:not(.active){background:transparent;padding-left:11px}.term.focused .term-title{font-size:1.56rem;color:var(--accent)}.letter{padding-top:14px}.tools{padding-top:17px}.sub{font-size:.91rem}.flash-options{grid-template-columns:1fr}.flashcard{min-height:280px;padding:20px}.study{padding:18px}}@media(prefers-reduced-motion:reduce){.detail-overlay:not([hidden]),.detail-overlay:not([hidden]) .detail-shell{animation:none}.term,.term-title{transition:none}}
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/mathlive"></script>
-</head>
-<body>
-  <main class="app">
-    <header>
-      <div><h1 class="title">Mi glosario</h1><p class="sub">Conceptos, definiciones y conexiones para estudiar mejor.</p></div>
-      <div class="header-actions"><button class="header-button" id="flashcardsButton">Flashcards</button><button class="header-button" id="themeButton" aria-pressed="false">◐ Modo oscuro</button><button class="add" id="newButton">+ Agregar concepto</button></div>
-    </header>
-    <section class="tools" aria-label="Búsqueda y filtros">
-      <div class="search"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" id="search" placeholder="Buscar concepto, definición o hashtag…" autocomplete="off"></div>
-      <div class="filter-heading"><span>Filtrar por hashtag</span><button class="clear" id="clearFilters" hidden>Limpiar filtros</button></div>
-      <div class="filters" id="filters"></div>
-    </section>
-    <section class="workspace">
-      <div><div class="list-head"><span id="count"></span><span>Orden alfabético</span></div><div class="terms" id="terms"></div></div>
-      <aside class="preview" id="preview" aria-live="polite"></aside>
-    </section>
-  </main>
-
-  <section class="detail-overlay" id="mobileDetailOverlay" hidden>
-    <div class="detail-shell" role="dialog" aria-modal="true" aria-label="Detalle del concepto">
-      <button class="close" type="button" data-close="mobileDetailOverlay" aria-label="Cerrar detalle">×</button>
-      <div class="mobile-detail-content" id="mobileDetailContent"></div>
-    </div>
-  </section>
-
-  <dialog id="conceptDialog">
-    <form class="modal" id="conceptForm" method="dialog">
-      <div class="modal-head"><h2 id="dialogTitle">Nuevo concepto</h2><button class="close" type="button" id="closeDialog" aria-label="Cerrar">×</button></div>
-      <label for="termInput">Concepto</label><input id="termInput" required placeholder="Ej.: Hemoglobina">
-      <label for="definitionInput">Definición breve</label><div class="editor-toolbar" aria-label="Formato de texto"><button type="button" data-command="bold" title="Negrita"><strong>N</strong></button><button type="button" data-command="italic" title="Cursiva"><em>C</em></button><button type="button" data-command="underline" title="Subrayado"><u>S</u></button><span class="toolbar-divider"></span><div class="color-palette" aria-label="Color de texto"><button type="button" class="color-swatch" data-color="#e53935" style="background:#e53935" title="Rojo" aria-label="Rojo"></button><button type="button" class="color-swatch" data-color="#f57c00" style="background:#f57c00" title="Naranja" aria-label="Naranja"></button><button type="button" class="color-swatch" data-color="#d7a800" style="background:#d7a800" title="Amarillo" aria-label="Amarillo"></button><button type="button" class="color-swatch" data-color="#168153" style="background:#168153" title="Verde" aria-label="Verde"></button><button type="button" class="color-swatch" data-color="#1476c9" style="background:#1476c9" title="Azul" aria-label="Azul"></button><button type="button" class="color-swatch" data-color="#5146c7" style="background:#5146c7" title="Índigo" aria-label="Índigo"></button><button type="button" class="color-swatch" data-color="#8b3fc1" style="background:#8b3fc1" title="Violeta" aria-label="Violeta"></button><button type="button" class="color-swatch" data-color="#d33d91" style="background:#d33d91" title="Rosa" aria-label="Rosa"></button><button type="button" class="color-swatch" data-color="#8a5a3b" style="background:#8a5a3b" title="Marrón" aria-label="Marrón"></button><button type="button" class="color-swatch" data-color="#1f5f42" style="background:#1f5f42" title="Verde oscuro" aria-label="Verde oscuro"></button><button type="button" class="color-swatch" data-color="#1d3f6d" style="background:#1d3f6d" title="Azul oscuro" aria-label="Azul oscuro"></button><button type="button" class="color-swatch" data-color="#8b1e2d" style="background:#8b1e2d" title="Rojo oscuro" aria-label="Rojo oscuro"></button><button type="button" class="color-swatch" data-color="#6b7280" style="background:#6b7280" title="Gris" aria-label="Gris"></button></div><span class="toolbar-divider"></span><button type="button" data-symbol="→" title="Insertar flecha">→</button><button type="button" data-symbol="←" title="Insertar flecha">←</button><button type="button" data-symbol="↔" title="Insertar flecha">↔</button><button type="button" data-symbol="⇒" title="Insertar implicación">⇒</button><button type="button" data-symbol="≠" title="Insertar símbolo">≠</button><button type="button" data-symbol="≤" title="Insertar símbolo">≤</button><button type="button" data-symbol="≥" title="Insertar símbolo">≥</button><button type="button" data-symbol="×" title="Insertar multiplicación">×</button><button type="button" data-symbol="÷" title="Insertar división">÷</button><span class="toolbar-divider"></span><button type="button" class="formula-trigger" data-formula title="Insertar fórmula">ƒx</button></div><div id="definitionInput" class="rich-editor" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Una explicación corta para el detalle."></div>
-      <label for="notesInput">Explicaciones extra</label><div class="editor-toolbar" aria-label="Formato de texto"><button type="button" data-command="bold" title="Negrita"><strong>N</strong></button><button type="button" data-command="italic" title="Cursiva"><em>C</em></button><button type="button" data-command="underline" title="Subrayado"><u>S</u></button><span class="toolbar-divider"></span><div class="color-palette" aria-label="Color de texto"><button type="button" class="color-swatch" data-color="#e53935" style="background:#e53935" title="Rojo" aria-label="Rojo"></button><button type="button" class="color-swatch" data-color="#f57c00" style="background:#f57c00" title="Naranja" aria-label="Naranja"></button><button type="button" class="color-swatch" data-color="#d7a800" style="background:#d7a800" title="Amarillo" aria-label="Amarillo"></button><button type="button" class="color-swatch" data-color="#168153" style="background:#168153" title="Verde" aria-label="Verde"></button><button type="button" class="color-swatch" data-color="#1476c9" style="background:#1476c9" title="Azul" aria-label="Azul"></button><button type="button" class="color-swatch" data-color="#5146c7" style="background:#5146c7" title="Índigo" aria-label="Índigo"></button><button type="button" class="color-swatch" data-color="#8b3fc1" style="background:#8b3fc1" title="Violeta" aria-label="Violeta"></button><button type="button" class="color-swatch" data-color="#d33d91" style="background:#d33d91" title="Rosa" aria-label="Rosa"></button><button type="button" class="color-swatch" data-color="#8a5a3b" style="background:#8a5a3b" title="Marrón" aria-label="Marrón"></button><button type="button" class="color-swatch" data-color="#1f5f42" style="background:#1f5f42" title="Verde oscuro" aria-label="Verde oscuro"></button><button type="button" class="color-swatch" data-color="#1d3f6d" style="background:#1d3f6d" title="Azul oscuro" aria-label="Azul oscuro"></button><button type="button" class="color-swatch" data-color="#8b1e2d" style="background:#8b1e2d" title="Rojo oscuro" aria-label="Rojo oscuro"></button><button type="button" class="color-swatch" data-color="#6b7280" style="background:#6b7280" title="Gris" aria-label="Gris"></button></div><span class="toolbar-divider"></span><button type="button" data-symbol="→" title="Insertar flecha">→</button><button type="button" data-symbol="←" title="Insertar flecha">←</button><button type="button" data-symbol="↔" title="Insertar flecha">↔</button><button type="button" data-symbol="⇒" title="Insertar implicación">⇒</button><button type="button" data-symbol="≠" title="Insertar símbolo">≠</button><button type="button" data-symbol="≤" title="Insertar símbolo">≤</button><button type="button" data-symbol="≥" title="Insertar símbolo">≥</button><button type="button" data-symbol="×" title="Insertar multiplicación">×</button><button type="button" data-symbol="÷" title="Insertar división">÷</button><span class="toolbar-divider"></span><button type="button" class="formula-trigger" data-formula title="Insertar fórmula">ƒx</button></div><div id="notesInput" class="rich-editor" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Ejemplos, relaciones, cosas que te cuesta recordar…"></div>
-      <label for="tagsInput">Hashtags</label><input id="tagsInput" placeholder="Unidad 1, Sangre, Molécula"><p class="hint">Separalos con coma. No hace falta escribir #.</p>
-      <div class="image-picker"><label for="imageInput">Imágenes o apuntes visuales</label><input id="imageInput" type="file" accept="image/*" multiple><p class="hint">Podés elegir varias. Esta maqueta las reduce antes de guardarlas.</p><div class="image-preview-grid" id="imagePreviews"></div></div>
-      <div class="modal-footer"><button type="button" class="secondary delete" id="deleteButton" hidden>Eliminar</button><button type="button" class="secondary" id="cancelButton">Cancelar</button><button class="save" value="default">Guardar concepto</button></div>
-    </form>
-  </dialog>
-
-  <dialog id="formulaDialog">
-    <div class="modal formula-modal">
-      <div class="modal-head"><h2>Fórmula</h2><button class="close" type="button" id="closeFormulaDialog" aria-label="Cerrar fórmula">×</button></div>
-      <p class="hint">Escribí normalmente o usá los atajos. En computadora también sirven <strong>/</strong>, <strong>^</strong> y <strong>_</strong>.</p>
-      <div class="formula-shortcuts" aria-label="Atajos de fórmula"><button type="button" data-formula-shortcut="\frac{#@}{#?}" title="Fracción">a⁄b</button><button type="button" data-formula-shortcut="#@^{#?}" title="Superíndice">xⁿ</button><button type="button" data-formula-shortcut="#@_{#?}" title="Subíndice">xₙ</button><button type="button" data-formula-shortcut="\sqrt{#0}" title="Raíz cuadrada">√</button></div>
-      <math-field id="formulaField" math-virtual-keyboard-policy="manual" aria-label="Editor de fórmula"></math-field>
-      <div class="modal-footer"><button class="secondary" type="button" id="cancelFormulaButton">Cancelar</button><button class="save" type="button" id="insertFormulaButton">Insertar fórmula</button></div>
-    </div>
-  </dialog>
-
-  <section class="setup-overlay" id="flashcardSetup" hidden>
-    <div class="setup-shell">
-    <form class="modal" id="flashcardForm">
-      <div class="modal-head"><h2>Flashcards</h2><button class="close" type="button" data-close="flashcardSetup" aria-label="Cerrar">×</button></div>
-      <p class="hint">Elegí qué conceptos entran en la ronda. Al iniciar se mezclan al azar.</p>
-      <label class="flash-all"><input type="checkbox" id="flashAll" checked> Incluir todos los conceptos</label>
-      <div class="flash-options" id="flashTags"></div>
-      <label>Orden de la tarjeta</label>
-      <div class="flash-order"><label><input type="radio" name="flashOrder" value="term" checked> Concepto al frente · definición atrás</label><label><input type="radio" name="flashOrder" value="definition"> Definición al frente · concepto atrás</label></div>
-      <div class="modal-footer"><button type="button" class="secondary" data-close="flashcardSetup">Cancelar</button><button type="submit" class="save" id="startFlashcardsButton">Empezar ronda</button></div>
-    </form>
-    </div>
-  </section>
-
-  <section class="study-overlay" id="studyOverlay" hidden>
-    <div class="study-shell" role="dialog" aria-modal="true" aria-label="Ronda de flashcards">
-    <section class="study">
-      <div class="study-top"><p id="studyProgress"></p><button class="close" type="button" id="closeStudyButton" onclick="document.getElementById('studyOverlay').hidden=true" aria-label="Cerrar">×</button></div>
-      <div class="flashcard" id="flashcard" role="button" tabindex="0"></div>
-      <div class="study-controls"><button class="secondary" id="shuffleButton">Mezclar</button><div><button class="secondary" id="flipButton">Dar vuelta</button><button class="save" id="nextButton">Siguiente</button></div></div>
-    </section>
-    </div>
-  </section>
-
-  <section class="image-overlay" id="studyImageOverlay" hidden>
-    <div class="image-shell" role="dialog" aria-modal="true" aria-label="Imágenes de la flashcard">
-      <button class="close" type="button" id="closeStudyImages" onclick="document.getElementById('studyImageOverlay').hidden=true" aria-label="Cerrar imágenes">×</button>
-      <div class="study-images" id="studyImages"></div>
-    </div>
-  </section>
-
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Economía de mis hábitos</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    const starter = [
-      {id:'1', term:'Axón', definition:'Prolongación de la neurona que transmite el impulso nervioso hacia otras células.', notes:'Pensalo como el “cable de salida” de la neurona. Puede estar recubierto de mielina.', tags:['Unidad 2','Sistema nervioso','Estructura'],images:[]},
-      {id:'2', term:'Dendrita', definition:'Prolongación corta y ramificada que recibe señales de otras neuronas.', notes:'La información suele entrar por dendritas y salir por el axón.', tags:['Unidad 2','Sistema nervioso','Estructura'],images:[]},
-      {id:'3', term:'Eritrocito', definition:'Glóbulo rojo: célula sanguínea que transporta oxígeno gracias a la hemoglobina.', notes:'En humanos maduros no tiene núcleo. También se lo llama hematíe.', tags:['Unidad 1','Sangre','Célula'],images:[]},
-      {id:'4', term:'Hemoglobina', definition:'Proteína de los glóbulos rojos que transporta oxígeno por la sangre.', notes:'Tiene hierro; por eso se relaciona con el color rojo de la sangre y con la anemia.', tags:['Unidad 1','Sangre','Molécula'],images:[]},
-      {id:'5', term:'Homeostasis', definition:'Capacidad del organismo de mantener condiciones internas estables.', notes:'Ejemplo: regular la temperatura corporal o la glucosa en sangre.', tags:['Unidad 1','Proceso','Regulación'],images:[]},
-      {id:'6', term:'Mielina', definition:'Sustancia que recubre ciertos axones y acelera la conducción del impulso nervioso.', notes:'No es parte de todas las neuronas. Su daño altera la comunicación nerviosa.', tags:['Unidad 2','Sistema nervioso','Molécula'],images:[]},
-      {id:'7', term:'Neurona', definition:'Célula especializada en recibir, procesar y transmitir información nerviosa.', notes:'Sus partes más nombradas: soma, dendritas y axón.', tags:['Unidad 2','Sistema nervioso','Célula'],images:[]},
-      {id:'8', term:'Plaqueta', definition:'Fragmento celular que participa en la coagulación de la sangre.', notes:'Cuando hay una lesión, se agrupan y ayudan a formar el tapón inicial.', tags:['Unidad 1','Sangre','Proceso'],images:[]},
-      {id:'9', term:'Sinapsis', definition:'Zona de comunicación entre una neurona y otra célula.', notes:'La señal suele viajar con neurotransmisores a través de una pequeña separación.', tags:['Unidad 2','Sistema nervioso','Proceso'],images:[]},
-      {id:'10', term:'Soma', definition:'Cuerpo celular de la neurona, donde se encuentran el núcleo y otros orgánulos.', notes:'Integra parte de la información que llega desde las dendritas.', tags:['Unidad 2','Sistema nervioso','Estructura'],images:[]}
+    tailwind.config = { darkMode: 'class' }
+  </script>
+
+  <!-- React y ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+  
+  <style>
+    body { -webkit-tap-highlight-color: transparent; }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+    html, body { overflow-x: hidden; }
+  </style>
+</head>
+<body class="bg-sky-50 dark:bg-slate-900 transition-colors duration-300">
+  
+  <div id="root"></div>
+
+  <!-- AQUI EMPIEZA LA APLICACION -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+    
+    // Iconos SVG 
+    const Plus = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>;
+    const Minus = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/></svg>;
+    const Check = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>;
+    const ShoppingBag = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>;
+    const Backpack = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M8 21v-5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v5"/><path d="M8 10h8"/><path d="M8 14h8"/></svg>;
+    const Trash2 = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>;
+    const X = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>;
+    const Settings = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>;
+    const Moon = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>;
+    const Sun = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>;
+    const Lock = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>;
+    const Timer = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>;
+    const Edit3 = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
+    const RotateCcw = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>;
+    const GripVertical = (p) => <svg {...p} viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>;
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDlbQX9GfpXTIQSM8SqjagR3VwxqN4R_1A",
+      authDomain: "economia-de-habitos.firebaseapp.com",
+      databaseURL: "https://economia-de-habitos-default-rtdb.firebaseio.com",
+      projectId: "economia-de-habitos",
+      storageBucket: "economia-de-habitos.firebasestorage.app",
+      messagingSenderId: "562796345847",
+      appId: "1:562796345847:web:51948c8699f6a8d42d16f2",
+      measurementId: "G-SZY4CN47EB"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    const COIN_COLORS = [
+      { name: 'Oro', value: '#FCD34D', bg: 'bg-yellow-300', text: 'text-yellow-700' },
+      { name: 'Rubí', value: '#FCA5A5', bg: 'bg-red-300', text: 'text-red-700' },
+      { name: 'Esmeralda', value: '#86EFAC', bg: 'bg-green-300', text: 'text-green-700' },
+      { name: 'Zafiro', value: '#93C5FD', bg: 'bg-blue-300', text: 'text-blue-700' },
+      { name: 'Amatista', value: '#D8B4FE', bg: 'bg-purple-300', text: 'text-purple-700' },
     ];
-    const dbKey='mi-glosario-demo-v2';
-    let concepts=JSON.parse(localStorage.getItem(dbKey)||'null')||starter;
-    let selectedId=concepts[0]?.id, activeTags=new Set(), editingId=null, flashDeck=[], flashIndex=0, flashFlipped=false, flashOrder='term', termsObserver=null, ignoreTermObserver=true, mobileListHighlight=false, mobileFocusId=null, detailOpenTimer=null, mobileFocusFrame=null;
-    const themeKey='mi-glosario-theme';
-    const collator=new Intl.Collator('es',{sensitivity:'base'});
-    const $=s=>document.querySelector(s); const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); const isCompact=()=>window.matchMedia('(max-width:760px)').matches;
-    function safeLatex(value){return String(value||'').replace(/[\u0000-\u001f<>]/g,'').slice(0,4000)}
-    function sanitizeRichHtml(value){const doc=new DOMParser().parseFromString(String(value||''),'text/html'),allowed=new Set(['B','STRONG','I','EM','U','BR','DIV','P','SPAN','FONT','MATH-SPAN']);function clean(node){[...node.childNodes].forEach(clean);if(node.nodeType!==1)return;const tag=node.tagName;if(tag==='SCRIPT'||tag==='STYLE'){node.remove();return}if(!allowed.has(tag)){node.replaceWith(...node.childNodes);return}const isFormula=tag==='MATH-SPAN'&&node.classList.contains('formula-inline'),latex=isFormula?safeLatex(node.getAttribute('data-latex')||node.textContent):'',color=tag==='FONT'?node.getAttribute('color'):node.style.color;[...node.attributes].forEach(a=>node.removeAttribute(a.name));if(isFormula&&latex){node.setAttribute('class','formula-inline');node.setAttribute('data-latex',latex);node.setAttribute('contenteditable','false');node.setAttribute('title','Doble clic para editar la fórmula');node.textContent=latex;return}if(color){if(tag==='FONT')node.setAttribute('color',color);else node.style.color=color}}[...doc.body.childNodes].forEach(clean);return doc.body.innerHTML}
-    function richHtml(value){const raw=String(value??'');return /<\/?[a-z][\s\S]*>/i.test(raw)?sanitizeRichHtml(raw):esc(raw).replace(/\n/g,'<br>')}
-    function plainRich(value){const raw=String(value??'');if(!/<\/?[a-z][\s\S]*>/i.test(raw))return raw;const doc=new DOMParser().parseFromString(sanitizeRichHtml(raw),'text/html');return doc.body.textContent||''}
-    function save(){localStorage.setItem(dbKey,JSON.stringify(concepts))}
-    function sorted(){return [...concepts].sort((a,b)=>collator.compare(a.term,b.term))}
-    function shown(){const q=$('#search').value.trim().toLocaleLowerCase('es');return sorted().filter(c=>{const text=[c.term,plainRich(c.definition),plainRich(c.notes),...c.tags].join(' ').toLocaleLowerCase('es');return (!q||text.includes(q))&&[...activeTags].every(tag=>c.tags.includes(tag))})}
-    function allTags(){return [...new Set(concepts.flatMap(c=>c.tags))].sort((a,b)=>collator.compare(a,b))}
-    function renderFilters(){const box=$('#filters'),tags=allTags();box.innerHTML=tags.map(t=>`<button class="chip ${activeTags.has(t)?'active':''}" data-tag="${esc(t)}">#${esc(t)}</button>`).join('');box.querySelectorAll('[data-tag]').forEach(b=>b.onclick=()=>{const tag=b.dataset.tag;activeTags.has(tag)?activeTags.delete(tag):activeTags.add(tag);render()});$('#clearFilters').hidden=!activeTags.size}
-    function renderList(){const items=shown(), box=$('#terms');$('#count').textContent=`${items.length} concepto${items.length===1?'':'s'}`;if(!items.length){box.innerHTML='<p class="no-results">No encontré ningún concepto con esa búsqueda o combinación de hashtags.</p>';return}let last='';box.innerHTML=items.map(c=>{let l=c.term.trim().charAt(0).toLocaleUpperCase('es'),letter=l!==last?(last=l,`<div class="letter">${esc(l)}</div>`):'',active=c.id===selectedId&&(!isCompact()||mobileListHighlight),focused=c.id===mobileFocusId;return `${letter}<button class="term ${active?'active':''} ${focused?'focused':''}" data-id="${c.id}"><span class="term-title">${esc(c.term)}</span><span class="mini-tags">${c.tags.slice(0,3).map(t=>`<span>#${esc(t)}</span>`).join('')}</span></button>`}).join('');box.querySelectorAll('.term').forEach(b=>b.onclick=()=>{ignoreTermObserver=true;selectedId=b.dataset.id;if(isCompact())mobileListHighlight=true;renderList();renderPreview();if(isCompact())openMobileDetail(85)});observeTerms();if(isCompact())requestAnimationFrame(updateMobileFocus)}
-    function selectedConcept(){return concepts.find(x=>x.id===selectedId)||shown()[0]}
-    function detailMarkup(c){const images=(c.images||[]).map(src=>`<img src="${src}" alt="Apunte visual de ${esc(c.term)}">`).join('');return `<div class="preview-top"><h2>${esc(c.term)}</h2><button class="edit" data-edit-detail>Editar</button></div><div class="preview-body"><div class="tag-list">${c.tags.map(t=>`<button class="tag" data-preview-tag="${esc(t)}">#${esc(t)}</button>`).join('')}</div><div class="definition">${richHtml(c.definition)}</div>${plainRich(c.notes).trim()?`<div class="detail">${richHtml(c.notes)}</div>`:'<p class="hint">Todavía no agregaste explicaciones extra.</p>'}${images?`<div class="gallery">${images}</div>`:''}</div>`}
-    function bindDetailActions(container,c){container.querySelector('[data-edit-detail]').onclick=()=>{closeMobileDetail();openEditor(c.id)};container.querySelectorAll('[data-preview-tag]').forEach(b=>b.onclick=()=>{activeTags.add(b.dataset.previewTag);closeMobileDetail();render()})}
-    function renderPreview(){let c=selectedConcept(),preview=$('#preview');if(!c){preview.innerHTML='<div class="preview-body"><p class="empty">Elegí o agregá un concepto para ver su ficha.</p></div>';return}selectedId=c.id;preview.innerHTML=detailMarkup(c);preview.scrollTop=0;bindDetailActions(preview,c)}
-    function updateMobileFocus(){if(!isCompact())return;const terms=[...document.querySelectorAll('#terms .term')];if(!terms.length)return;const middle=window.innerHeight*.52;let closest=terms.reduce((best,term)=>Math.abs((term.getBoundingClientRect().top+term.getBoundingClientRect().bottom)/2-middle)<best.distance?{term,distance:Math.abs((term.getBoundingClientRect().top+term.getBoundingClientRect().bottom)/2-middle)}:best,{term:null,distance:Infinity}).term;if(!closest)return;mobileFocusId=closest.dataset.id;terms.forEach(term=>term.classList.toggle('focused',term===closest))}
-    function closeMobileDetail(){clearTimeout(detailOpenTimer);setOverlay('mobileDetailOverlay',false);if(isCompact()){mobileListHighlight=false;document.querySelectorAll('#terms .term').forEach(term=>term.classList.remove('active'));requestAnimationFrame(updateMobileFocus)}}
-    function openMobileDetail(delay=0){clearTimeout(detailOpenTimer);const show=()=>{const c=selectedConcept(),content=$('#mobileDetailContent');if(!c)return;selectedId=c.id;content.innerHTML=detailMarkup(c);bindDetailActions(content,c);setOverlay('mobileDetailOverlay',true)};detailOpenTimer=delay?setTimeout(show,delay):show()}
-    function observeTerms(){termsObserver?.disconnect();const root=$('#terms');if(!window.IntersectionObserver||!root)return;root.onscroll=()=>{ignoreTermObserver=false};termsObserver=new IntersectionObserver(entries=>{if(ignoreTermObserver)return;let hit=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(hit&&hit.target.dataset.id!==selectedId){selectedId=hit.target.dataset.id;renderPreview();root.querySelectorAll('.term').forEach(x=>x.classList.toggle('active',x.dataset.id===selectedId))}}, {root,rootMargin:'-18% 0px -62% 0px',threshold:[.05,.5]});root.querySelectorAll('.term').forEach(x=>termsObserver.observe(x))}
-    function render(){ignoreTermObserver=true;renderFilters();renderList();renderPreview()}
-    let activeRichEditor=null,richSelection=null,formulaInsertRange=null,formulaTargetEditor=null,editingFormulaNode=null;
-    function rememberRichSelection(){const selection=window.getSelection();if(!selection?.rangeCount)return;const range=selection.getRangeAt(0),editor=range.commonAncestorContainer.nodeType===1?range.commonAncestorContainer:range.commonAncestorContainer.parentElement;const container=editor?.closest?.('.rich-editor');if(container){activeRichEditor=container;richSelection=range.cloneRange()}}
-    function useRichCommand(command,value=null){const editor=activeRichEditor||$('#definitionInput');if(!editor)return;editor.focus();if(richSelection&&editor.contains(richSelection.commonAncestorContainer)){const selection=window.getSelection();selection.removeAllRanges();selection.addRange(richSelection)}document.execCommand(command,false,value);rememberRichSelection()}
-    function makeFormulaNode(latex){const node=document.createElement('math-span');node.className='formula-inline';node.dataset.latex=latex;node.setAttribute('contenteditable','false');node.setAttribute('title','Doble clic para editar la fórmula');node.textContent=latex;return node}
-    function clearFormulaState(){formulaInsertRange=null;formulaTargetEditor=null;editingFormulaNode=null;window.mathVirtualKeyboard?.hide()}
-    function openFormulaEditor(node=null){const editor=activeRichEditor||$('#definitionInput');if(!editor||!customElements.get('math-field')){alert('No se pudo cargar el editor de fórmulas. Probá de nuevo con conexión a internet.');return}if(node){editingFormulaNode=node;formulaTargetEditor=editor}else{editor.focus();rememberRichSelection();formulaInsertRange=richSelection?.cloneRange()||null;formulaTargetEditor=editor;editingFormulaNode=null}const field=$('#formulaField');field.value=safeLatex(node?.dataset.latex||node?.textContent||'');$('#formulaDialog').showModal();setTimeout(()=>field.focus(),0)}
-    function closeFormulaDialog(){$('#formulaDialog').close()}
-    function insertFormulaShortcut(latex){const field=$('#formulaField');field.focus();field.insert(latex,{focus:true})}
-    function insertFormula(){const latex=safeLatex($('#formulaField').value);if(!latex.trim())return;const editor=formulaTargetEditor||activeRichEditor||$('#definitionInput'),node=makeFormulaNode(latex);if(editingFormulaNode?.isConnected){editingFormulaNode.replaceWith(node);activeRichEditor=editor;closeFormulaDialog();return}editor.focus();if(formulaInsertRange&&editor.contains(formulaInsertRange.commonAncestorContainer)){formulaInsertRange.deleteContents();formulaInsertRange.insertNode(node);const spacer=document.createTextNode(' ');node.after(spacer);const range=document.createRange(),selection=window.getSelection();range.setStartAfter(spacer);range.collapse(true);selection.removeAllRanges();selection.addRange(range);richSelection=range.cloneRange()}else editor.append(node,document.createTextNode(' '));activeRichEditor=editor;closeFormulaDialog()}
-    function setupRichEditors(){document.addEventListener('selectionchange',rememberRichSelection);document.querySelectorAll('.rich-editor').forEach(editor=>{editor.addEventListener('focus',()=>activeRichEditor=editor);editor.addEventListener('dblclick',event=>{const node=event.target.closest?.('math-span.formula-inline');if(!node)return;event.preventDefault();event.stopPropagation();activeRichEditor=editor;openFormulaEditor(node)})});document.querySelectorAll('[data-command]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();useRichCommand(button.dataset.command)}));document.querySelectorAll('[data-symbol]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();useRichCommand('insertText',button.dataset.symbol)}));document.querySelectorAll('[data-color]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();useRichCommand('foreColor',button.dataset.color)}));document.querySelectorAll('[data-formula]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();openFormulaEditor()}));document.querySelectorAll('[data-formula-shortcut]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();insertFormulaShortcut(button.dataset.formulaShortcut)}));$('#closeFormulaDialog').onclick=closeFormulaDialog;$('#cancelFormulaButton').onclick=closeFormulaDialog;$('#insertFormulaButton').onclick=insertFormula;$('#formulaDialog').addEventListener('close',clearFormulaState)}
-    function openEditor(id=null){editingId=id;const c=id&&concepts.find(x=>x.id===id);$('#dialogTitle').textContent=c?'Editar concepto':'Nuevo concepto';$('#termInput').value=c?.term||'';$('#definitionInput').innerHTML=richHtml(c?.definition||'');$('#notesInput').innerHTML=richHtml(c?.notes||'');$('#tagsInput').value=c?.tags.join(', ')||'';$('#imageInput').value='';renderImagePreviews(c?.images||[]);$('#deleteButton').hidden=!c;$('#conceptDialog').showModal();$('#termInput').focus()}
-    function shuffle(items){return [...items].sort(()=>Math.random()-.5)}
-    function renderFlashTags(){const chosen=$('#flashAll').checked;$('#flashTags').innerHTML=allTags().map(t=>`<label><input type="checkbox" value="${esc(t)}" ${chosen?'disabled':''}> #${esc(t)}</label>`).join('')}
-    function setOverlay(id,open){const overlay=$('#'+id);overlay.hidden=!open;overlay.style.display=open?'grid':'none'}
-    function openFlashcards(){renderFlashTags();setOverlay('flashcardSetup',true)}
-    function openStudyImages(images){$('#studyImages').innerHTML=images.map(src=>`<img src="${src}" alt="Imagen asociada a esta flashcard">`).join('');$('#studyImageOverlay').hidden=false}
-    function renderFlashcard(){if(!flashDeck.length){flashDeck=shuffle(concepts);flashIndex=0}const c=flashDeck[flashIndex];if(!c){$('#studyProgress').textContent='';$('#flashcard').innerHTML='<p class="study-empty">Todavía no hay conceptos para estudiar.</p>';return}const frontIsTerm=flashOrder==='term',answer=frontIsTerm?`<div class="answer"><div>${richHtml(c.definition)}</div>${plainRich(c.notes).trim()?`<div class="extra-answer">${richHtml(c.notes)}</div>`:''}</div>`:`<h2>${esc(c.term)}</h2>`,front=frontIsTerm?`<h2>${esc(c.term)}</h2>`:`<div class="answer">${richHtml(c.definition)}</div>`;const imageButton=(c.images||[]).length?`<button class="view-image" type="button" id="viewStudyImages">Ver imagen${c.images.length>1?'es':''}</button>`:'';$('#studyProgress').textContent=`Tarjeta ${flashIndex+1} de ${flashDeck.length}`;$('#flashcard').innerHTML=flashFlipped?`<div class="flash-content"><small>Respuesta</small>${answer}${imageButton}<div class="tap">Tocá fuera del botón para volver</div></div>`:`<div class="flash-content"><small>Frente</small>${front}<div class="tap">Tocá para ver la respuesta</div></div>`;$('#viewStudyImages')?.addEventListener('click',e=>{e.stopPropagation();openStudyImages(c.images)})}
-    function closeStudy(){ setOverlay('studyOverlay',false) }
-    function startFlashcards(){try{const tags=[...document.querySelectorAll('#flashTags input:checked')].map(i=>i.value),useAll=$('#flashAll').checked||tags.length===0;flashOrder=$('input[name="flashOrder"]:checked')?.value||'term';flashDeck=shuffle(useAll?concepts:concepts.filter(c=>tags.every(t=>(c.tags||[]).includes(t))));if(!flashDeck.length){alert('No hay conceptos que tengan todos esos hashtags. Elegí otra combinación.');return}flashIndex=0;flashFlipped=false;renderFlashcard();setOverlay('flashcardSetup',false);setOverlay('studyOverlay',true)}catch(error){console.error('FLASHCARDS_START_ERROR',error)}}
-    function nextFlashcard(){if(!flashDeck.length)return;flashIndex=(flashIndex+1)%flashDeck.length;flashFlipped=false;renderFlashcard()}
-    function setTheme(dark){document.body.classList.toggle('dark',dark);$('#themeButton').setAttribute('aria-pressed',dark);$('#themeButton').textContent=dark?'☀ Modo claro':'◐ Modo oscuro';localStorage.setItem(themeKey,dark?'dark':'light')}
-    $('#newButton').onclick=()=>openEditor();$('#flashcardsButton').onclick=openFlashcards;$('#themeButton').onclick=()=>setTheme(!document.body.classList.contains('dark'));$('#closeDialog').onclick=()=>$('#conceptDialog').close();$('#cancelButton').onclick=()=>$('#conceptDialog').close();
-    document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{if(b.dataset.close==='mobileDetailOverlay'){closeMobileDetail();return}const el=$('#'+b.dataset.close);if(el.tagName==='DIALOG')el.close();else setOverlay(b.dataset.close,false)});$('#closeStudyButton').onclick=closeStudy;$('#flashcardSetup').onclick=e=>{if(e.target===$('#flashcardSetup'))setOverlay('flashcardSetup',false)};$('#studyOverlay').onclick=e=>{if(e.target===$('#studyOverlay'))closeStudy()};$('#studyImageOverlay').onclick=e=>{if(e.target===$('#studyImageOverlay'))$('#studyImageOverlay').hidden=true};$('#mobileDetailOverlay').onclick=e=>{if(e.target===$('#mobileDetailOverlay'))closeMobileDetail()};$('#flashAll').onchange=renderFlashTags;$('#flashcardForm').onsubmit=e=>{e.preventDefault();startFlashcards()};$('#flashcard').onclick=()=>{if(!flashDeck.length)return;flashFlipped=!flashFlipped;renderFlashcard()};$('#flashcard').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#flashcard').click()}};$('#flipButton').onclick=()=>{if(!flashDeck.length)return;flashFlipped=!flashFlipped;renderFlashcard()};$('#nextButton').onclick=nextFlashcard;$('#shuffleButton').onclick=()=>{if(!flashDeck.length){renderFlashcard();return}flashDeck=shuffle(flashDeck);flashIndex=0;flashFlipped=false;renderFlashcard()};setOverlay('flashcardSetup',false);setOverlay('studyOverlay',false);setOverlay('mobileDetailOverlay',false);$('#studyImageOverlay').hidden=true;window.addEventListener('resize',()=>{if(!isCompact())closeMobileDetail()});window.addEventListener('scroll',()=>{if(!isCompact())return;cancelAnimationFrame(mobileFocusFrame);mobileFocusFrame=requestAnimationFrame(updateMobileFocus)},{passive:true});
-    $('#deleteButton').onclick=()=>{if(confirm('¿Eliminar este concepto?')){concepts=concepts.filter(c=>c.id!==editingId);selectedId=concepts[0]?.id;save();$('#conceptDialog').close();render()}};
-    function renderImagePreviews(images){$('#imagePreviews').innerHTML=images.map(src=>`<img src="${src}" alt="Vista previa de imagen seleccionada">`).join('')}
-    function compactImage(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=reject;reader.onload=()=>{const img=new Image();img.onerror=reject;img.onload=()=>{const max=1280,scale=Math.min(1,max/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/webp',.78))};img.src=reader.result};reader.readAsDataURL(file)})}
-    $('#imageInput').onchange=async()=>{const files=[...$('#imageInput').files].filter(f=>f.type.startsWith('image/')).slice(0,6);if(!files.length)return;try{renderImagePreviews(await Promise.all(files.map(compactImage)))}catch{alert('No se pudo leer una de las imágenes. Probá con otro archivo.')}};
-    $('#conceptForm').onsubmit=async e=>{e.preventDefault();const term=$('#termInput').value.trim(),definition=sanitizeRichHtml($('#definitionInput').innerHTML),notes=sanitizeRichHtml($('#notesInput').innerHTML);const tags=[...new Set($('#tagsInput').value.split(',').map(t=>t.trim().replace(/^#/,'')).filter(Boolean))];if(!term||!plainRich(definition).trim())return;const old=editingId&&concepts.find(c=>c.id===editingId);let images=old?.images||[];const files=[...$('#imageInput').files].filter(f=>f.type.startsWith('image/')).slice(0,6);if(files.length)images=await Promise.all(files.map(compactImage));const obj={id:editingId||crypto.randomUUID(),term,definition,notes,tags,images};if(editingId)concepts=concepts.map(c=>c.id===editingId?obj:c);else concepts.push(obj);selectedId=obj.id;try{save()}catch{alert('Las imágenes ocupan demasiado para esta maqueta local. Usá archivos más chicos; con Firebase van en Storage, no dentro del glosario.');return}$('#conceptDialog').close();render()};
-    $('#search').oninput=()=>{ignoreTermObserver=true;renderList()};$('#clearFilters').onclick=()=>{activeTags.clear();render()};setupRichEditors();setTheme(localStorage.getItem(themeKey)==='dark');render();
+    const COIN_SYMBOLS = ['⭐', '🪙', '💎', '💰', '🍎', '⚡', '🔥', '🌸', '🐾', '👑', '🥕', '🎈', '💵', '🥥'];
+    const EMOJIS = ['🎮', '📺', '🍫', '📱', '🛌', '📚', '🏃‍♂️', '🎨', '🍕', '🍿', '🎧', '🧸', '💻', '⚽'];
+    const FIXED_ACCOUNT_CODE = 'valen';
+    // El día de hábitos cambia a las 6:00 AM de Argentina, no a medianoche.
+    const ARGENTINA_TIME_ZONE = 'America/Argentina/Buenos_Aires';
+    const DAY_MS = 24 * 60 * 60 * 1000;
+    const WEEKDAY_OPTIONS = [
+      { value: 1, label: 'Lunes' }, { value: 2, label: 'Martes' }, { value: 3, label: 'Miércoles' },
+      { value: 4, label: 'Jueves' }, { value: 5, label: 'Viernes' }, { value: 6, label: 'Sábado' }, { value: 0, label: 'Domingo' }
+    ];
+    const argentinaDayFormatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Argentina/Buenos_Aires',
+      year: 'numeric', month: '2-digit', day: '2-digit'
+    });
+    const argentinaWeekdayFormatter = new Intl.DateTimeFormat('en-US', { timeZone: ARGENTINA_TIME_ZONE, weekday: 'short' });
+    const getHabitReferenceDate = (date = new Date()) => new Date(new Date(date).getTime() - 6 * 60 * 60 * 1000);
+    const getHabitDayKeyForDate = (date) => argentinaDayFormatter.format(getHabitReferenceDate(date));
+    const getHabitDayKey = () => getHabitDayKeyForDate(new Date());
+    const getHabitWeekdayIndex = (date = new Date()) => ({ Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 })[argentinaWeekdayFormatter.format(getHabitReferenceDate(date))];
+    const getWeeklyCycleKey = (resetDay = 1) => {
+      const referenceDate = getHabitReferenceDate();
+      const difference = (getHabitWeekdayIndex() - Number(resetDay) + 7) % 7;
+      return argentinaDayFormatter.format(new Date(referenceDate.getTime() - difference * DAY_MS));
+    };
+    const getHabitProgressCycleKey = (habit) => {
+      if (habit?.trackingMode !== 'weekly') return getHabitDayKey();
+      return habit.weeklyResetMode === 'manual' ? null : getWeeklyCycleKey(habit.weeklyResetDay);
+    };
+    const normalizeProgressEntry = (value, fallbackCycleKey = null) => {
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        return {
+          count: Math.max(0, Number(value.count) || 0),
+          history: Array.isArray(value.history) ? value.history.filter(time => Number.isFinite(Number(time))).map(Number) : [],
+          cycleKey: value.cycleKey ?? fallbackCycleKey
+        };
+      }
+      return { count: Math.max(0, Number(value) || 0), history: [], cycleKey: fallbackCycleKey };
+    };
+    const getActiveProgressEntry = (value, habit, legacyDayKey = null) => {
+      const expectedCycleKey = getHabitProgressCycleKey(habit);
+      const fallbackCycleKey = habit?.trackingMode === 'weekly' ? expectedCycleKey : (legacyDayKey || expectedCycleKey);
+      const entry = normalizeProgressEntry(value, fallbackCycleKey);
+      if (expectedCycleKey && entry.cycleKey !== expectedCycleKey) return { count: 0, history: [], cycleKey: expectedCycleKey };
+      return entry;
+    };
+    const cleanExpiredHabitProgress = (progress, habits, legacyDayKey = null) => {
+      const nextProgress = {};
+      Object.entries(progress || {}).forEach(([habitId, value]) => {
+        const habit = (habits || []).find(item => String(item.id) === String(habitId));
+        if (!habit) return;
+        const entry = getActiveProgressEntry(value, habit, legacyDayKey);
+        if (entry.count > 0) nextProgress[habitId] = entry;
+      });
+      return nextProgress;
+    };
+    const formatProgressTimestamp = (timestamp, isWeekly) => {
+      if (!timestamp) return null;
+      const time = new Intl.DateTimeFormat('es-AR', { timeZone: ARGENTINA_TIME_ZONE, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(timestamp));
+      if (!isWeekly) return `Última vez: ${time}`;
+      const elapsedDays = Math.round((Date.parse(`${getHabitDayKey()}T00:00:00Z`) - Date.parse(`${getHabitDayKeyForDate(new Date(timestamp))}T00:00:00Z`)) / DAY_MS);
+      if (elapsedDays <= 0) return `Hoy, ${time}`;
+      if (elapsedDays === 1) return 'Ayer';
+      if (elapsedDays === 2) return 'Antes de ayer';
+      return new Intl.DateTimeFormat('es-AR', { timeZone: ARGENTINA_TIME_ZONE, day: '2-digit', month: '2-digit' }).format(new Date(timestamp));
+    };
+
+    function App() {
+      const defaultState = {
+        isSetup: false,
+        coinName: 'Moneda',
+        coinSymbol: '⭐',
+        coinColor: COIN_COLORS[0],
+        balance: 0,
+        habits: [],
+        habitProgress: {},
+        habitProgressDay: null,
+        rewards: [],
+        inventory: [], 
+        theme: 'light',
+        uiScale: 0.9 
+      };
+
+      const [gameState, setGameState] = useState(() => {
+        const saved = localStorage.getItem('habitos_data_' + FIXED_ACCOUNT_CODE);
+        if (saved) return { ...defaultState, ...JSON.parse(saved) };
+        return defaultState;
+      });
+      const [isLoading, setIsLoading] = useState(true);
+      const [secretCode] = useState(FIXED_ACCOUNT_CODE);
+      const [isLoggedIn] = useState(true);
+
+      const [activeTab, setActiveTab] = useState('habits'); 
+      const [showHabitModal, setShowHabitModal] = useState(false);
+      const [editingHabit, setEditingHabit] = useState(null); 
+      const [showAddReward, setShowAddReward] = useState(false);
+      const [editingReward, setEditingReward] = useState(null);
+      const [purchaseModal, setPurchaseModal] = useState({ show: false, reward: null, qty: 1 });
+
+      const [pastState, setPastState] = useState(null);
+      const [toastMsg, setToastMsg] = useState(null);
+      const undoTimeout = useRef(null);
+      const localRecoveryDone = useRef(false);
+
+      useEffect(() => {
+        if (!isLoggedIn || !secretCode) return;
+        localRecoveryDone.current = false;
+        setIsLoading(true);
+        
+        // 1. Cargar local rápido
+        const localData = localStorage.getItem('habitos_data_' + secretCode);
+        const localState = localData ? JSON.parse(localData) : null;
+        if (localState) {
+          setGameState(prev => ({ ...prev, ...localState }));
+        }
+
+        // Sistema de seguridad: si Firebase falla o tarda por no estar activado, forzamos parar la carga
+        const fallbackTimer = setTimeout(() => {
+           setIsLoading(false);
+           console.warn("Firebase tardó en responder. Usando modo local.");
+        }, 2000);
+        
+        // 2. Conectar a Firebase
+        const unsubscribe = db.collection('cuentas').doc(secretCode).onSnapshot((docSnap) => {
+          clearTimeout(fallbackTimer);
+          if (docSnap.exists) {
+            const remoteData = docSnap.data();
+
+            let data = {
+              ...remoteData,
+              habits: Array.isArray(remoteData.habits) ? remoteData.habits : [],
+              rewards: Array.isArray(remoteData.rewards) ? remoteData.rewards : [],
+              inventory: Array.isArray(remoteData.inventory) ? remoteData.inventory : [],
+              habitProgress: remoteData.habitProgress && typeof remoteData.habitProgress === 'object' ? remoteData.habitProgress : {}
+            };
+            if (!data.coinSymbol) data.coinSymbol = '⭐';
+
+            const currentHabitDay = getHabitDayKey();
+            const cleanedProgress = cleanExpiredHabitProgress(data.habitProgress, data.habits, data.habitProgressDay);
+            const needsProgressSync = data.habitProgressDay !== currentHabitDay || JSON.stringify(data.habitProgress) !== JSON.stringify(cleanedProgress);
+            const progressSyncFields = needsProgressSync ? {
+              habitProgress: cleanedProgress,
+              habitProgressDay: currentHabitDay
+            } : {};
+            data = { ...data, ...progressSyncFields };
+
+            // Migración de versiones anteriores: recuperamos datos locales sólo
+            // si esos campos todavía no existían en Firebase. Un arreglo vacío
+            // sí es un estado válido y no debe revivir datos viejos.
+            const recoveredFields = {};
+            if (!localRecoveryDone.current && localState?.rewards?.length && !Array.isArray(remoteData.rewards)) {
+              recoveredFields.rewards = localState.rewards;
+            }
+            if (!localRecoveryDone.current && localState?.inventory?.length && !Array.isArray(remoteData.inventory)) {
+              recoveredFields.inventory = localState.inventory;
+            }
+            localRecoveryDone.current = true;
+
+            setGameState(prev => {
+              const merged = { ...prev, ...data, ...recoveredFields };
+              localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(merged));
+              return merged;
+            });
+
+            const fieldsToSync = { ...recoveredFields, ...progressSyncFields };
+            if (Object.keys(fieldsToSync).length) {
+              db.collection('cuentas').doc(secretCode).set({ ...fieldsToSync, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
+                .catch(err => console.warn("No se pudo actualizar o recuperar el seguimiento:", err));
+            }
+          }
+          setIsLoading(false);
+        }, (error) => {
+          clearTimeout(fallbackTimer);
+          console.warn("Modo Local Activo debido a error de conexión:", error.message);
+          
+          if (error.code === 'permission-denied') {
+             // Apagar la red de Firebase para detener los reintentos infinitos y limpiar la consola
+             db.disableNetwork().catch(err => console.error("Error al deshabilitar red:", err));
+             setToastMsg("⚠️ Modo Local: Base de datos no habilitada.");
+             setTimeout(() => setToastMsg(null), 5000);
+          }
+          
+          setIsLoading(false); 
+        });
+
+        return () => {
+          clearTimeout(fallbackTimer);
+          unsubscribe();
+        };
+      }, [isLoggedIn, secretCode]);
+
+      const updateState = (updates, undoMessage = null) => {
+        const newState = { ...gameState, ...updates };
+
+        if (undoMessage) {
+          setPastState(gameState); 
+          setToastMsg(undoMessage);
+          if (undoTimeout.current) clearTimeout(undoTimeout.current);
+          undoTimeout.current = setTimeout(() => {
+            setPastState(null);
+            setToastMsg(null);
+          }, 5000); 
+        }
+        
+        setGameState(newState);
+
+        if (isLoggedIn && secretCode) {
+          localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(newState));
+          // Guardamos sólo los campos cambiados, evitando que un estado viejo
+          // de otra pestaña reescriba la mochila completa.
+          db.collection('cuentas').doc(secretCode).set({ ...updates, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
+            .catch(err => console.warn("Modo local activo:", err));
+        }
+      };
+
+      // El reinicio no depende de que esté abierta la pestaña de Hábitos.
+      // Mantiene los semanales/manuales y limpia sólo lo que ya venció.
+      useEffect(() => {
+        if (!isLoggedIn) return;
+        const refreshExpiredProgress = () => {
+          const newHabitDay = getHabitDayKey();
+          const cleanedProgress = cleanExpiredHabitProgress(gameState.habitProgress, gameState.habits, gameState.habitProgressDay);
+          if (gameState.habitProgressDay !== newHabitDay || JSON.stringify(gameState.habitProgress || {}) !== JSON.stringify(cleanedProgress)) {
+            updateState({ habitProgress: cleanedProgress, habitProgressDay: newHabitDay });
+          }
+        };
+        refreshExpiredProgress();
+        const resetTimer = setInterval(refreshExpiredProgress, 30000);
+        return () => clearInterval(resetTimer);
+      }, [isLoggedIn, gameState.habitProgress, gameState.habitProgressDay, gameState.habits]);
+
+      const handleUndo = () => {
+        if (pastState) {
+          setGameState(pastState);
+          if (isLoggedIn && secretCode) {
+            localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(pastState));
+            db.collection('cuentas').doc(secretCode).set({ ...pastState, updatedAt: firebase.firestore.FieldValue.serverTimestamp() })
+              .catch(err => console.warn("Modo local activo:", err));
+          }
+          setPastState(null);
+          setToastMsg(null);
+          if (undoTimeout.current) clearTimeout(undoTimeout.current);
+        }
+      };
+
+      const pluralize = (word) => word.endsWith('s') ? word : word + 's';
+
+      if (isLoading && !gameState.isSetup) {
+        return (
+          <div className="min-h-screen bg-sky-50 flex flex-col items-center justify-center p-4">
+            <div className="w-12 h-12 border-4 border-pink-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <h2 className="text-xl font-bold text-sky-800">Conectando...</h2>
+          </div>
+        );
+      }
+
+      if (!gameState.isSetup) {
+        return <SetupScreen gameState={gameState} updateState={updateState} />;
+      }
+
+      return (
+        <div className={gameState.theme === 'dark' ? 'dark' : ''}>
+          <div className="min-h-screen bg-sky-50 dark:bg-slate-900 font-sans pb-24 text-gray-800 dark:text-gray-100 transition-colors duration-300 relative">
+            
+            <header 
+              className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md sticky top-0 z-10 p-3 rounded-b-3xl shadow-sm flex flex-col items-center justify-center border-b-2 border-sky-100 dark:border-slate-700 transition-colors duration-300"
+              style={{ zoom: gameState.uiScale }}
+            >
+              <h1 className="text-lg font-black text-sky-800 dark:text-sky-300 mb-1">Economía de mis hábitos</h1>
+              <div className={`flex items-center gap-2 px-5 py-2 rounded-full shadow-inner border-2 border-white dark:border-slate-600 ${gameState.coinColor.bg} ${gameState.coinColor.text}`}>
+                <span className="text-2xl animate-pulse drop-shadow-sm">{gameState.coinSymbol}</span>
+                <span className="text-2xl font-black">{gameState.balance}</span>
+                <span className="text-sm font-bold uppercase tracking-wider">{pluralize(gameState.coinName)}</span>
+              </div>
+            </header>
+
+            <main className={`p-3 ${activeTab === 'habits' ? 'max-w-6xl' : 'max-w-2xl'} mx-auto mt-2`} style={{ zoom: gameState.uiScale }}>
+              {activeTab === 'habits' && (
+                <HabitsTab 
+                  gameState={gameState} 
+                  updateState={updateState} 
+                  onAdd={() => { setEditingHabit(null); setShowHabitModal(true); }} 
+                  onEdit={(habit) => { setEditingHabit(habit); setShowHabitModal(true); }}
+                />
+              )}
+              {activeTab === 'shop' && (
+                <ShopTab gameState={gameState} onAdd={() => { setEditingReward(null); setShowAddReward(true); }}
+                  onEdit={(reward) => { setEditingReward(reward); setShowAddReward(true); }}
+                  onDelete={(rewardId) => updateState({
+                    rewards: gameState.rewards.filter(reward => reward.id !== rewardId),
+                    inventory: gameState.inventory.filter(item => item.rewardId !== rewardId)
+                  }, 'Premio eliminado')}
+                  onBuy={(reward) => setPurchaseModal({ 
+                    show: true, 
+                    reward, 
+                    qty: reward.isTimeBased ? reward.minPurchaseTime : reward.minPurchase 
+                  })}
+                />
+              )}
+              {activeTab === 'backpack' && (
+                <BackpackTab gameState={gameState} updateState={updateState} />
+              )}
+              {activeTab === 'settings' && (
+                <SettingsTab gameState={gameState} updateState={updateState} />
+              )}
+            </main>
+
+            {toastMsg && (
+              <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 z-40 animate-in slide-in-from-bottom-5 fade-in duration-300" style={{ transform: 'translateX(-50%)' }}>
+                <span className="text-sm font-bold whitespace-nowrap">{toastMsg}</span>
+                <button onClick={handleUndo} className="flex items-center gap-1 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-xl text-sm font-black transition-colors active:scale-95">
+                  <RotateCcw size={14} /> Deshacer
+                </button>
+              </div>
+            )}
+
+            <nav className="fixed bottom-0 w-full bg-white dark:bg-slate-800 border-t-2 border-sky-100 dark:border-slate-700 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-safe transition-colors duration-300 z-30">
+              <div className="max-w-2xl mx-auto flex justify-around p-2">
+                <NavButton active={activeTab === 'habits'} onClick={() => setActiveTab('habits')} icon={<Check className="w-6 h-6" />} text="Hábitos" color="text-emerald-500" />
+                <NavButton active={activeTab === 'shop'} onClick={() => setActiveTab('shop')} icon={<ShoppingBag className="w-6 h-6" />} text="Premios" color="text-pink-500" />
+                <NavButton active={activeTab === 'backpack'} onClick={() => setActiveTab('backpack')} icon={<Backpack className="w-6 h-6" />} text="Mochila" color="text-amber-500" badge={gameState.inventory.length} />
+                <NavButton active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Settings className="w-6 h-6" />} text="Ajustes" color="text-gray-500 dark:text-gray-400" />
+              </div>
+            </nav>
+
+            {}
+            {showHabitModal && (
+              <HabitModal 
+                habit={editingHabit}
+                coinName={gameState.coinName}
+                onClose={() => setShowHabitModal(false)} 
+                onSave={(newHabit) => {
+                  const savedHabit = editingHabit ? { ...newHabit, id: editingHabit.id } : { ...newHabit, id: Date.now() };
+                  if (editingHabit) {
+                    const updated = gameState.habits.map(h => h.id === editingHabit.id ? savedHabit : h);
+                    const nextProgress = { ...gameState.habitProgress };
+                    if (nextProgress[savedHabit.id]) {
+                      const entry = normalizeProgressEntry(nextProgress[savedHabit.id], getHabitProgressCycleKey(savedHabit));
+                      nextProgress[savedHabit.id] = { ...entry, cycleKey: getHabitProgressCycleKey(savedHabit) };
+                    }
+                    updateState({ habits: updated, habitProgress: nextProgress, habitProgressDay: getHabitDayKey() });
+                  } else {
+                    updateState({ habits: [...gameState.habits, savedHabit] });
+                  }
+                  setShowHabitModal(false);
+                }} 
+              />
+            )}
+            
+            {showAddReward && (
+              <AddRewardModal 
+                reward={editingReward}
+                coinName={gameState.coinName}
+                onClose={() => { setShowAddReward(false); setEditingReward(null); }}
+                onSave={(newReward) => {
+                  setShowAddReward(false);
+                  setEditingReward(null);
+                  if (editingReward) {
+                    updateState({ rewards: gameState.rewards.map(reward => reward.id === editingReward.id ? { ...newReward, id: reward.id } : reward) });
+                  } else {
+                    updateState({ rewards: [...gameState.rewards, { ...newReward, id: Date.now() }] });
+                  }
+                }} 
+              />
+            )}
+            
+            {purchaseModal.show && (
+              <PurchaseModal
+                modal={purchaseModal}
+                coinName={gameState.coinName} 
+                balance={gameState.balance}
+                onClose={() => setPurchaseModal({ show: false, reward: null, qty: 1 })}
+                setQty={(q) => setPurchaseModal(prev => ({ ...prev, qty: q }))}
+                onConfirm={() => {
+                  const r = purchaseModal.reward;
+                  const cost = r.isTimeBased 
+                    ? (purchaseModal.qty / r.timeUnit) * r.costPerUnit 
+                    : purchaseModal.qty * r.cost;
+                  
+                  if (gameState.balance >= cost) {
+                    const newBalance = gameState.balance - cost;
+                    let newInv = [...gameState.inventory];
+                    const existingItemIndex = newInv.findIndex(i => i.rewardId === r.id);
+                    if (existingItemIndex >= 0) {
+                      newInv[existingItemIndex].quantity += purchaseModal.qty;
+                    } else {
+                      newInv.push({ rewardId: r.id, quantity: purchaseModal.qty });
+                    }
+                    updateState({ balance: newBalance, inventory: newInv }, '¡Premio comprado!');
+                    setPurchaseModal({ show: false, reward: null, qty: 1 });
+                  }
+                }}
+              />
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function SetupScreen({ gameState, updateState }) {
+      const [name, setName] = useState(gameState.coinName);
+      const [color, setColor] = useState(gameState.coinColor);
+      const [symbol, setSymbol] = useState(gameState.coinSymbol);
+
+      return (
+        <div className="min-h-screen bg-pink-50 flex items-center justify-center p-4">
+          <div className="bg-white p-6 rounded-[2rem] shadow-xl border-4 border-white max-w-sm w-full text-center relative overflow-hidden">
+            <h1 className="text-2xl font-black text-pink-500 mb-4 relative z-10">¡Bienvenido! ✨</h1>
+            <p className="text-gray-600 text-sm mb-6 font-medium">Configuremos tu economía.</p>
+            
+            <div className="mb-4">
+              <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Nombre de tu moneda</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+                className="w-full text-center text-xl font-bold border-2 border-pink-100 rounded-xl p-3 bg-gray-50 outline-none focus:border-pink-300"
+                placeholder="Ej: Punto, Moneda, Euro..." />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Ícono / Símbolo</label>
+              <div className="flex flex-wrap justify-center gap-1.5 p-2 bg-gray-50 rounded-xl border-2 border-gray-100">
+                {COIN_SYMBOLS.map(s => (
+                  <button key={s} onClick={() => setSymbol(s)}
+                    className={`text-2xl w-10 h-10 rounded-lg transition-all ${s === symbol ? 'bg-white shadow-sm border-2 border-pink-300 scale-110 z-10' : 'border-2 border-transparent opacity-60 hover:opacity-100'}`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-xs font-bold text-gray-500 mb-3 uppercase">Color mágico</label>
+              <div className="flex flex-wrap justify-center gap-2">
+                {COIN_COLORS.map(c => (
+                  <button key={c.name} onClick={() => setColor(c)}
+                    className={`w-10 h-10 rounded-full border-2 transition-transform ${c.bg} ${color.name === c.name ? 'border-gray-800 scale-110 shadow-lg' : 'border-transparent'}`}
+                  />
+                ))}
+              </div>
+            </div>
+            <button onClick={() => updateState({ isSetup: true, coinName: name || 'Moneda', coinColor: color, coinSymbol: symbol })}
+              className="w-full py-3 rounded-xl text-lg font-black text-white bg-pink-500 active:scale-95 transition-all shadow-md">
+              ¡Comenzar! 🚀
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function HabitsTab({ gameState, updateState, onAdd, onEdit }) {
+      const [draggedHabit, setDraggedHabit] = useState(null);
+      const [dragOverId, setDragOverId] = useState(null);
+      const currentHabitDay = getHabitDayKey();
+      const habitProgress = gameState.habitProgress || {};
+      const getProgress = (habit) => getActiveProgressEntry(habitProgress[habit.id], habit, gameState.habitProgressDay);
+
+      const saveHabitProgress = (habit, entry) => {
+        const nextProgress = { ...habitProgress };
+        if (entry.count > 0) nextProgress[habit.id] = entry;
+        else delete nextProgress[habit.id];
+        updateState({ habitProgress: nextProgress, habitProgressDay: currentHabitDay });
+      };
+
+      const incrementHabitProgress = (habit) => {
+        const entry = getProgress(habit);
+        saveHabitProgress(habit, { ...entry, count: entry.count + 1, history: [...entry.history, Date.now()] });
+      };
+
+      const decrementHabitProgress = (habit) => {
+        const entry = getProgress(habit);
+        if (!entry.count) return;
+        saveHabitProgress(habit, { ...entry, count: entry.count - 1, history: entry.history.slice(0, -1) });
+      };
+
+      const toggleHabitProgress = (habit) => {
+        const entry = getProgress(habit);
+        if (entry.count) saveHabitProgress(habit, { ...entry, count: 0, history: [] });
+        else incrementHabitProgress(habit);
+      };
+
+      const handleHabitClick = (habit) => {
+        const change = habit.type === 'good' ? habit.amount : -habit.amount;
+        const entry = getProgress(habit);
+        const nextProgress = {
+          ...habitProgress,
+          [habit.id]: { ...entry, count: entry.count + 1, history: [...entry.history, Date.now()] }
+        };
+        updateState(
+          { balance: gameState.balance + change, habitProgress: nextProgress, habitProgressDay: currentHabitDay }, 
+          habit.type === 'good' ? `¡Sumaste ${habit.amount} ${gameState.coinName}!` : `Restaste ${habit.amount} ${gameState.coinName}`
+        );
+      };
+      
+      const deleteHabit = (id) => {
+        const nextProgress = { ...habitProgress };
+        delete nextProgress[id];
+        updateState(
+          { habits: gameState.habits.filter(h => h.id !== id), habitProgress: nextProgress, habitProgressDay: currentHabitDay },
+          "Hábito eliminado"
+        );
+      }
+
+      const reorderHabits = (draggedId, targetId) => {
+        if (!draggedId || draggedId === targetId) return;
+
+        const dragged = gameState.habits.find(h => h.id === draggedId);
+        const target = gameState.habits.find(h => h.id === targetId);
+        if (!dragged || !target || dragged.type !== target.type) return;
+
+        const reordered = [...gameState.habits];
+        const fromIndex = reordered.findIndex(h => h.id === draggedId);
+        reordered.splice(fromIndex, 1);
+        const targetIndex = reordered.findIndex(h => h.id === targetId);
+        reordered.splice(targetIndex, 0, dragged);
+        updateState({ habits: reordered });
+      };
+
+      const finishDrag = (targetId) => {
+        if (draggedHabit) reorderHabits(draggedHabit.id, targetId);
+        setDraggedHabit(null);
+        setDragOverId(null);
+      };
+
+      const getHabitIdAtPoint = (x, y) => {
+        const target = document.elementFromPoint(x, y)?.closest('[data-habit-id]');
+        return target?.dataset.habitId || null;
+      };
+
+      const handleTouchMove = (event, habit) => {
+        const targetId = getHabitIdAtPoint(event.clientX, event.clientY);
+        const target = gameState.habits.find(h => h.id === targetId);
+        setDragOverId(target?.type === habit.type ? targetId : null);
+      };
+
+      const handleTouchEnd = (event, habit) => {
+        const targetId = getHabitIdAtPoint(event.clientX, event.clientY);
+        const target = gameState.habits.find(h => h.id === targetId);
+        if (target?.type === habit.type) reorderHabits(habit.id, targetId);
+        setDraggedHabit(null);
+        setDragOverId(null);
+      };
+
+      const goodHabits = gameState.habits.filter(h => h.type === 'good');
+      const badHabits = gameState.habits.filter(h => h.type === 'bad');
+
+      return (
+        <div className="space-y-6 animate-in fade-in duration-300 w-full min-w-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start w-full min-w-0">
+            <Section title="Buenos Hábitos (+)" color="text-emerald-500 dark:text-emerald-400">
+              {goodHabits.length === 0 && <EmptyState text="¡Agrega un buen hábito!" />}
+              <div className="grid gap-2 min-w-0">
+                {goodHabits.map(h => {
+                  const progress = getProgress(h);
+                  return <HabitCard key={h.id} habit={h} coinSymbol={gameState.coinSymbol} onClick={() => handleHabitClick(h)} onEdit={() => onEdit(h)} onDelete={() => deleteHabit(h.id)}
+                    progressCount={progress.count} lastProgressAt={progress.history[progress.history.length - 1]} onToggleProgress={() => toggleHabitProgress(h)} onIncreaseProgress={() => incrementHabitProgress(h)} onDecreaseProgress={() => decrementHabitProgress(h)}
+                    isDragging={draggedHabit?.id === h.id} isDragOver={dragOverId === h.id && draggedHabit?.id !== h.id}
+                    onDragStart={() => setDraggedHabit(h)} onDragOver={() => setDragOverId(h.id)} onDrop={() => finishDrag(h.id)} onDragEnd={() => { setDraggedHabit(null); setDragOverId(null); }}
+                    onTouchStart={(event) => { event.currentTarget.setPointerCapture(event.pointerId); setDraggedHabit(h); }} onTouchMove={(event) => handleTouchMove(event, h)} onTouchEnd={(event) => handleTouchEnd(event, h)} />;
+                })}
+              </div>
+            </Section>
+
+            <Section title="Malos Hábitos (-)" color="text-red-500 dark:text-red-400">
+              {badHabits.length === 0 && <EmptyState text="No hay malos hábitos." />}
+              <div className="grid gap-2 min-w-0">
+                {badHabits.map(h => {
+                  const progress = getProgress(h);
+                  return <HabitCard key={h.id} habit={h} coinSymbol={gameState.coinSymbol} onClick={() => handleHabitClick(h)} onEdit={() => onEdit(h)} onDelete={() => deleteHabit(h.id)}
+                    progressCount={progress.count} lastProgressAt={progress.history[progress.history.length - 1]} onToggleProgress={() => toggleHabitProgress(h)} onIncreaseProgress={() => incrementHabitProgress(h)} onDecreaseProgress={() => decrementHabitProgress(h)}
+                    isDragging={draggedHabit?.id === h.id} isDragOver={dragOverId === h.id && draggedHabit?.id !== h.id}
+                    onDragStart={() => setDraggedHabit(h)} onDragOver={() => setDragOverId(h.id)} onDrop={() => finishDrag(h.id)} onDragEnd={() => { setDraggedHabit(null); setDragOverId(null); }}
+                    onTouchStart={(event) => { event.currentTarget.setPointerCapture(event.pointerId); setDraggedHabit(h); }} onTouchMove={(event) => handleTouchMove(event, h)} onTouchEnd={(event) => handleTouchEnd(event, h)} />;
+                })}
+              </div>
+            </Section>
+          </div>
+
+          <button onClick={onAdd} className="w-full py-3 border-2 border-dashed border-sky-300 dark:border-slate-600 text-sky-600 dark:text-sky-400 rounded-2xl font-bold hover:bg-sky-100/50 dark:hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <Plus className="w-5 h-5" /> Nuevo Hábito
+          </button>
+        </div>
+      );
+    }
+
+    function ShopTab({ gameState, onAdd, onEdit, onDelete, onBuy }) {
+      const checkCanAffordMin = (r) => {
+        const minCost = r.isTimeBased ? (r.minPurchaseTime / r.timeUnit) * r.costPerUnit : r.cost * r.minPurchase;
+        return gameState.balance >= minCost;
+      };
+
+      return (
+        <div className="space-y-4 animate-in fade-in duration-300">
+          <div className="text-center mb-6 mt-2">
+            <h2 className="text-2xl font-black text-pink-500 dark:text-pink-400 mb-1">Tienda 🎁</h2>
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Intercambia tus {gameState.coinName}s.</p>
+          </div>
+
+          {gameState.rewards.length === 0 && <EmptyState text="La tienda está vacía. ¡Crea premios!" />}
+
+          <div className="grid grid-cols-2 gap-3">
+            {gameState.rewards.map(reward => (
+              <RewardCard key={reward.id} reward={reward} coinName={gameState.coinName} coinSymbol={gameState.coinSymbol}
+                canAfford={checkCanAffordMin(reward)} onBuy={() => checkCanAffordMin(reward) && onBuy(reward)}
+                onEdit={() => onEdit(reward)} onDelete={() => onDelete(reward.id)}
+              />
+            ))}
+          </div>
+
+          <button onClick={onAdd} className="w-full mt-2 py-3 border-2 border-dashed border-pink-300 dark:border-pink-800 text-pink-600 dark:text-pink-400 rounded-2xl font-bold hover:bg-pink-50 dark:hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <Plus className="w-5 h-5" /> Nuevo Premio
+          </button>
+        </div>
+      );
+    }
+
+    function BackpackTab({ gameState, updateState }) {
+      const updateItemQty = (rewardId, amountToSubtract) => {
+        let newInv = [...gameState.inventory];
+        const index = newInv.findIndex(i => i.rewardId === rewardId);
+        if (index >= 0) {
+          newInv[index].quantity -= amountToSubtract;
+          if (newInv[index].quantity <= 0) {
+            newInv.splice(index, 1);
+          }
+          updateState(
+            { inventory: newInv },
+            amountToSubtract > 1 ? `Gastaste ${amountToSubtract} minutos` : 'Premio utilizado'
+          );
+        }
+      };
+
+      return (
+        <div className="space-y-4 animate-in fade-in duration-300">
+          <div className="text-center mb-6 mt-2">
+            <h2 className="text-2xl font-black text-amber-500 dark:text-amber-400 mb-1">Mochila 🎒</h2>
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Premios acumulados para usar.</p>
+          </div>
+
+          {gameState.inventory.length === 0 ? (
+            <EmptyState text="Tu mochila está vacía." />
+          ) : (
+            <div className="grid gap-3">
+              {gameState.inventory.map(item => {
+                const reward = gameState.rewards.find(r => r.id === item.rewardId);
+                if (!reward) return null;
+                
+                return (
+                  <div key={item.rewardId} className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border-2 border-amber-100 dark:border-slate-700 flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="text-3xl bg-amber-50 dark:bg-slate-700 w-12 h-12 rounded-xl flex items-center justify-center border border-amber-100 dark:border-slate-600 shadow-inner">
+                        {reward.emoji}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-gray-800 dark:text-gray-100">{reward.name}</h3>
+                        <p className="text-amber-600 dark:text-amber-400 font-bold bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 rounded inline-block text-xs mt-1">
+                          Tienes: {item.quantity} {reward.isTimeBased ? 'minutos' : 'disponibles'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2 justify-end">
+                      {reward.isTimeBased && (
+                        <button 
+                          onClick={() => updateItemQty(item.rewardId, 5)}
+                          disabled={item.quantity < 5}
+                          className="bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white px-3 py-1.5 text-sm rounded-xl font-bold flex-1 transition-colors active:scale-95"
+                        >
+                          - 5 min
+                        </button>
+                      )}
+                      <button 
+                        onClick={() => updateItemQty(item.rewardId, reward.isTimeBased ? item.quantity : 1)}
+                        className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1 transition-colors active:scale-95"
+                        title={reward.isTimeBased ? "Gastar todo" : "Usar 1"}
+                      >
+                        <Check className="w-4 h-4" /> {reward.isTimeBased ? 'Gastar Todo' : 'Usar 1'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function SettingsTab({ gameState, updateState }) {
+      return (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="text-center mb-6 mt-2">
+            <h2 className="text-2xl font-black text-gray-500 dark:text-gray-300 mb-1">Ajustes ⚙️</h2>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
+            <span className="font-bold text-gray-700 dark:text-gray-200">Modo Oscuro</span>
+            <button 
+              onClick={() => updateState({ theme: gameState.theme === 'dark' ? 'light' : 'dark' })}
+              className="p-2 bg-gray-100 dark:bg-slate-700 rounded-xl transition-transform active:scale-90"
+            >
+              {gameState.theme === 'dark' ? <Moon className="w-5 h-5 text-indigo-400" /> : <Sun className="w-5 h-5 text-amber-500" />}
+            </button>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+            <span className="font-bold text-gray-700 dark:text-gray-200 block mb-3">Tamaño de la interfaz</span>
+            <div className="flex gap-2">
+              {[{ label: 'Pequeño', val: 0.85 }, { label: 'Normal', val: 1.0 }, { label: 'Grande', val: 1.15 }].map(s => (
+                <button 
+                  key={s.label}
+                  onClick={() => updateState({ uiScale: s.val })}
+                  className={`flex-1 p-2 rounded-xl text-sm font-bold border-2 transition-all ${gameState.uiScale === s.val ? 'bg-sky-100 border-sky-400 text-sky-700 dark:bg-sky-900/40 dark:border-sky-500 dark:text-sky-300' : 'border-transparent bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400'}`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+        </div>
+      );
+    }
+
+    function HabitModal({ habit, coinName, onClose, onSave }) {
+      const isEditing = !!habit;
+      const [name, setName] = useState(habit?.name || '');
+      const [type, setType] = useState(habit?.type || 'good'); 
+      const [timeBased, setTimeBased] = useState(habit?.timeBased || false);
+      const [timeUnit, setTimeUnit] = useState(habit?.timeUnit || 25);
+      const [amount, setAmount] = useState(habit?.amount || 1);
+      const [isWeeklyTracking, setIsWeeklyTracking] = useState(habit?.trackingMode === 'weekly');
+      const [weeklyResetMode, setWeeklyResetMode] = useState(habit?.weeklyResetMode || 'weekday');
+      const [weeklyResetDay, setWeeklyResetDay] = useState(habit?.weeklyResetDay ?? 1);
+
+      return (
+        <Modal onClose={onClose} title={isEditing ? "Editar Hábito" : "Nuevo Hábito"}>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Nombre</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Ej: Leer, Aseo..." autoFocus className="input-std" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Tipo</label>
+              <div className="flex gap-2">
+                <button onClick={() => setType('good')} className={`toggle-btn ${type === 'good' ? 'active-green' : 'inactive'}`}>Bueno (+)</button>
+                <button onClick={() => setType('bad')} className={`toggle-btn ${type === 'bad' ? 'active-red' : 'inactive'}`}>Malo (-)</button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Modalidad</label>
+              <div className="flex gap-2">
+                <button onClick={() => setTimeBased(false)} className={`toggle-btn ${!timeBased ? 'active-blue' : 'inactive'}`}>Por Vez</button>
+                <button onClick={() => setTimeBased(true)} className={`toggle-btn ${timeBased ? 'active-blue' : 'inactive'}`}>Por Tiempo</button>
+              </div>
+            </div>
+            {timeBased && (
+              <div className="bg-sky-50 dark:bg-slate-700/50 p-3 rounded-xl border border-sky-100 dark:border-slate-600 flex items-center justify-between">
+                <span className="text-sm font-bold text-gray-600 dark:text-gray-300">Minutos a realizar:</span>
+                <input type="number" min="1" value={timeUnit} onChange={e => setTimeUnit(Number(e.target.value))} className="w-16 p-2 text-center rounded bg-white dark:bg-slate-800 border dark:border-slate-600 text-sm font-bold" />
+              </div>
+            )}
+            <div className="bg-violet-50 dark:bg-slate-700/50 p-3 rounded-xl border border-violet-100 dark:border-slate-600">
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 cursor-pointer">
+                <input type="checkbox" checked={isWeeklyTracking} onChange={e => setIsWeeklyTracking(e.target.checked)} className="w-4 h-4 accent-violet-500" />
+                Es un hábito de seguimiento semanal
+              </label>
+              {!isWeeklyTracking && <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-2">Los hábitos diarios se reinician todos los días a las 6:00 AM.</p>}
+            </div>
+            {isWeeklyTracking && (
+              <div className="bg-violet-50/70 dark:bg-slate-700/30 p-3 rounded-xl border border-violet-100 dark:border-slate-600">
+                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Reinicio del seguimiento</label>
+                <select value={weeklyResetMode === 'manual' ? 'manual' : weeklyResetDay} onChange={e => {
+                  if (e.target.value === 'manual') setWeeklyResetMode('manual');
+                  else { setWeeklyResetMode('weekday'); setWeeklyResetDay(Number(e.target.value)); }
+                }} className="input-std text-sm">
+                  {WEEKDAY_OPTIONS.map(day => <option key={day.value} value={day.value}>Cada {day.label}</option>)}
+                  <option value="manual">Manual</option>
+                </select>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-2">
+                  {weeklyResetMode === 'manual' ? 'Se conserva hasta que destildes el hábito o lleves el contador a cero.' : 'Se reinicia a las 6:00 AM del día elegido.'}
+                </p>
+              </div>
+            )}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Cantidad de {coinName}s de impacto</label>
+              <input type="number" min="1" value={amount} onChange={e => setAmount(Number(e.target.value))} className="input-std text-center text-lg" />
+            </div>
+            <button onClick={() => name.trim() && onSave({ name, type, timeBased, timeUnit: timeBased ? timeUnit : null, amount,
+              trackingMode: isWeeklyTracking ? 'weekly' : 'daily', weeklyResetMode: isWeeklyTracking ? weeklyResetMode : null, weeklyResetDay: isWeeklyTracking && weeklyResetMode !== 'manual' ? weeklyResetDay : null
+            })} className="btn-primary mt-2">
+              {isEditing ? "Guardar Cambios" : "Guardar Hábito"}
+            </button>
+          </div>
+        </Modal>
+      );
+    }
+
+    function AddRewardModal({ reward, coinName, onClose, onSave }) {
+      const isEditing = Boolean(reward);
+      const [name, setName] = useState(reward?.name || '');
+      const [emoji, setEmoji] = useState(reward?.emoji || EMOJIS[0]);
+      const [isTimeBased, setIsTimeBased] = useState(reward?.isTimeBased || false);
+      const [cost, setCost] = useState(reward?.cost ?? 1);
+      const [minPurchase, setMinPurchase] = useState(reward?.minPurchase ?? 1);
+      const [timeUnit, setTimeUnit] = useState(reward?.timeUnit ?? 5);
+      const [costPerUnit, setCostPerUnit] = useState(reward?.costPerUnit ?? 1);
+      const [minPurchaseTime, setMinPurchaseTime] = useState(reward?.minPurchaseTime ?? 20); 
+
+      return (
+        <Modal onClose={onClose} title={isEditing ? "Editar Premio" : "Nuevo Premio"}>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Ícono</label>
+              <div className="flex flex-wrap gap-1 justify-center bg-gray-50 dark:bg-slate-700/30 p-2 rounded-xl h-24 overflow-y-auto border border-gray-100 dark:border-slate-700">
+                {EMOJIS.map(e => (
+                  <button key={e} onClick={() => setEmoji(e)} className={`text-2xl w-10 h-10 rounded-lg transition-transform ${emoji === e ? 'bg-pink-200 dark:bg-pink-900/50 shadow scale-110' : ''}`}>{e}</button>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Nombre</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} className="input-std" placeholder="Ej: Jugar Minecraft" />
+            </div>
+
+            <div className="bg-pink-50 dark:bg-slate-700/50 p-3 rounded-xl border border-pink-100 dark:border-slate-600">
+               <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 cursor-pointer">
+                 <input type="checkbox" checked={isTimeBased} onChange={e => setIsTimeBased(e.target.checked)} className="w-4 h-4 accent-pink-500" />
+                 ¿Es un premio por tiempo? (Ej. Minutos)
+               </label>
+            </div>
+
+            {isTimeBased ? (
+              <div className="grid grid-cols-2 gap-3 bg-gray-50 dark:bg-slate-700/30 p-3 rounded-xl">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Minutos x Unidad</label>
+                  <input type="number" min="1" value={timeUnit} onChange={e => setTimeUnit(Number(e.target.value))} className="input-std text-sm" />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Costo ({coinName}s)</label>
+                  <input type="number" min="1" value={costPerUnit} onChange={e => setCostPerUnit(Number(e.target.value))} className="input-std text-sm" />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Compra Mínima (En Minutos)</label>
+                  <input type="number" min="1" value={minPurchaseTime} onChange={e => setMinPurchaseTime(Number(e.target.value))} className="input-std text-sm" />
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Costo</label>
+                  <input type="number" min="1" value={cost} onChange={e => setCost(Number(e.target.value))} className="input-std" />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Compra Mínima</label>
+                  <input type="number" min="1" value={minPurchase} onChange={e => setMinPurchase(Number(e.target.value))} className="input-std" />
+                </div>
+              </div>
+            )}
+
+            <button 
+              onClick={() => name.trim() && onSave({ 
+                name, emoji, isTimeBased, 
+                cost: isTimeBased ? null : cost,
+                minPurchase: isTimeBased ? null : minPurchase,
+                timeUnit: isTimeBased ? timeUnit : null,
+                costPerUnit: isTimeBased ? costPerUnit : null,
+                minPurchaseTime: isTimeBased ? minPurchaseTime : null
+              })} 
+              className="btn-pink mt-2"
+            >
+              {isEditing ? "Guardar Cambios" : "Guardar Premio"}
+            </button>
+          </div>
+        </Modal>
+      );
+    }
+
+    function PurchaseModal({ modal, coinName, balance, onClose, setQty, onConfirm }) {
+      const { reward, qty } = modal;
+      const isTime = reward.isTimeBased;
+      const step = isTime ? reward.timeUnit : 1;
+      const minQty = isTime ? reward.minPurchaseTime : reward.minPurchase;
+      const totalCost = isTime ? (qty / reward.timeUnit) * reward.costPerUnit : qty * reward.cost;
+      const canAfford = balance >= totalCost;
+
+      return (
+        <Modal onClose={onClose} title="">
+           <div className="text-center">
+              <div className="text-5xl mb-2 bg-gray-50 dark:bg-slate-700 w-20 h-20 mx-auto flex items-center justify-center rounded-2xl border-2 border-gray-100 dark:border-slate-600 shadow-inner">
+                {reward.emoji}
+              </div>
+              <h2 className="text-xl font-black text-gray-800 dark:text-gray-100 mb-1">{reward.name}</h2>
+              
+              <div className="bg-sky-50 dark:bg-slate-700/50 rounded-xl p-3 my-4">
+                <p className="font-bold text-gray-500 dark:text-gray-300 text-xs uppercase mb-2">
+                  ¿Cuánto vas a comprar? {isTime && '(Minutos)'}
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                   <button onClick={() => setQty(Math.max(minQty, qty - step))} disabled={qty <= minQty} className="w-10 h-10 bg-white dark:bg-slate-600 rounded-full font-black text-xl shadow border border-gray-100 dark:border-slate-500 active:scale-90 flex items-center justify-center dark:text-white disabled:opacity-50">-</button>
+                   <span className="text-2xl font-black w-20 dark:text-white">
+                     {qty} {isTime && <span className="text-sm">m</span>}
+                   </span>
+                   <button onClick={() => setQty(qty + step)} className="w-10 h-10 bg-white dark:bg-slate-600 rounded-full font-black text-xl shadow border border-gray-100 dark:border-slate-500 active:scale-90 flex items-center justify-center dark:text-white">+</button>
+                </div>
+                {minQty > 1 && (
+                  <p className="text-xs text-sky-600 dark:text-sky-400 font-bold mt-2">Mínimo: {minQty} {isTime ? 'minutos' : 'unidades'}</p>
+                )}
+              </div>
+
+              <div className={`p-3 rounded-xl border-2 mb-4 flex items-center justify-between ${canAfford ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800'}`}>
+                 <span className="font-bold text-gray-600 dark:text-gray-300 text-sm">A pagar:</span>
+                 <div className="flex items-center gap-1">
+                   <span className={`text-xl font-black ${canAfford ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>{totalCost}</span>
+                   <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">{coinName}s</span>
+                 </div>
+              </div>
+
+              <div className="flex gap-2">
+                 <button onClick={onClose} className="flex-1 py-3 font-bold text-gray-500 bg-gray-100 dark:bg-slate-700 dark:text-gray-300 rounded-xl active:scale-95 text-sm">Cancelar</button>
+                 <button onClick={onConfirm} disabled={!canAfford} className={`flex-1 py-3 font-black text-white rounded-xl active:scale-95 text-sm shadow ${canAfford ? 'bg-pink-500' : 'bg-gray-300 dark:bg-slate-600 opacity-50 cursor-not-allowed'}`}>
+                   ¡Comprar!
+                 </button>
+              </div>
+           </div>
+        </Modal>
+      );
+    }
+
+    function NavButton({ active, onClick, icon, text, color, badge }) {
+      return (
+        <button onClick={onClick} className={`relative flex flex-col items-center justify-center w-16 h-14 rounded-xl transition-all ${active ? 'bg-sky-50 dark:bg-slate-700 scale-105' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'}`}>
+          <div className={`${active ? color : 'text-gray-400 dark:text-gray-500'} transition-colors`}>{icon}</div>
+          <span className={`text-[9px] font-black mt-0.5 ${active ? color : 'text-gray-400 dark:text-gray-500'}`}>{text}</span>
+          {badge > 0 && <span className="absolute top-0 right-1 bg-red-500 text-white text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full border border-white dark:border-slate-800">{badge}</span>}
+        </button>
+      );
+    }
+
+    function Section({ title, color, children }) {
+      return (
+        <section>
+          <h2 className={`text-lg font-black ${color} mb-2 ml-1`}>{title}</h2>
+          {children}
+        </section>
+      );
+    }
+
+    function HabitCard({ habit, coinSymbol, onClick, onEdit, onDelete, progressCount, lastProgressAt, onToggleProgress, onIncreaseProgress, onDecreaseProgress, isDragging, isDragOver, onDragStart, onDragOver, onDrop, onDragEnd, onTouchStart, onTouchMove, onTouchEnd }) {
+      const isGood = habit.type === 'good';
+      const colorClass = isGood ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-300';
+      const btnClass = isGood ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white';
+      const trackingText = habit.trackingMode === 'weekly' ? (habit.weeklyResetMode === 'manual' ? ' · Semanal manual' : ' · Semanal') : '';
+      const progressTimestamp = formatProgressTimestamp(lastProgressAt, habit.trackingMode === 'weekly');
+      
+      return (
+        <div data-habit-id={habit.id} draggable onDragStart={(event) => { event.dataTransfer.effectAllowed = 'move'; onDragStart(); }} onDragOver={(event) => { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; onDragOver(); }} onDrop={(event) => { event.preventDefault(); onDrop(); }} onDragEnd={onDragEnd}
+          className={`p-3 rounded-2xl border-2 flex items-center justify-between shadow-sm min-w-0 transition-all ${isDragging ? 'opacity-50' : ''} ${isDragOver ? 'ring-2 ring-sky-400 ring-offset-2 dark:ring-offset-slate-900' : ''} ${colorClass}`}>
+          <div className="flex-1 min-w-0 pr-2">
+            <h3 className="font-bold text-sm leading-tight truncate" title={habit.name}>{habit.name}</h3>
+            <p className="text-xs opacity-80 mt-0.5 truncate">{habit.timeBased ? `Cada ${habit.timeUnit} min` : 'Por vez'}{trackingText}</p>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button onClick={onClick} className={`flex items-center gap-1 ${btnClass} px-3 py-2 rounded-xl font-black active:scale-90 transition-transform shadow-sm`}>
+              {isGood ? <Plus className="w-4 h-4" /> : <Minus className="w-4 h-4" />}
+              <span className="flex items-center gap-0.5">{habit.amount} <span className="text-[10px]">{coinSymbol}</span></span>
+            </button>
+            <div className="flex flex-col items-end gap-0.5">
+              <div className="flex items-center gap-0.5 rounded-lg border border-black/10 dark:border-white/10 p-0.5 bg-white/40 dark:bg-black/10">
+                <button type="button" title={progressCount ? "Quitar tilde" : "Marcar como hecho"} aria-label={progressCount ? `Quitar tilde de ${habit.name}` : `Marcar ${habit.name} como hecho`} onClick={onToggleProgress}
+                  className={`w-6 h-6 rounded-md flex items-center justify-center active:scale-90 transition-all ${progressCount ? btnClass : 'bg-white/70 dark:bg-slate-700/70 text-gray-400 dark:text-gray-500'}`}>
+                  <Check className="w-3.5 h-3.5" />
+                </button>
+                <button type="button" title="Restar al contador" aria-label={`Restar al contador de ${habit.name}`} onClick={onDecreaseProgress} disabled={!progressCount}
+                  className="w-5 h-6 rounded-md flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed active:scale-90 transition-all">
+                  <Minus className="w-3 h-3" />
+                </button>
+                <span className="w-4 text-center text-[11px] leading-6 font-black tabular-nums" aria-label={`${progressCount} veces hecho`}>{progressCount}</span>
+                <button type="button" title="Sumar al contador" aria-label={`Sumar al contador de ${habit.name}`} onClick={onIncreaseProgress}
+                  className="w-5 h-6 rounded-md flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/10 active:scale-90 transition-all">
+                  <Plus className="w-3 h-3" />
+                </button>
+              </div>
+              {progressTimestamp && <span className="text-[9px] leading-none font-bold opacity-75 whitespace-nowrap">{progressTimestamp}</span>}
+            </div>
+            <div className="flex items-center gap-1 border-l-2 pl-1.5 border-black/10 dark:border-white/10">
+              <button type="button" aria-label={`Arrastrar ${habit.name}`} onPointerDown={onTouchStart} onPointerMove={onTouchMove} onPointerUp={onTouchEnd} onPointerCancel={onDragEnd} className="p-1 text-gray-400 dark:text-gray-500 hover:text-sky-500 transition-colors bg-white/50 dark:bg-black/20 rounded-md touch-none cursor-grab active:cursor-grabbing"><GripVertical className="w-3.5 h-3.5" /></button>
+              <div className="flex flex-col gap-1">
+                <button onClick={onEdit} className="p-1 text-gray-400 dark:text-gray-500 hover:text-sky-500 transition-colors bg-white/50 dark:bg-black/20 rounded-md"><Edit3 className="w-3.5 h-3.5" /></button>
+                <button onClick={onDelete} className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors bg-white/50 dark:bg-black/20 rounded-md"><Trash2 className="w-3.5 h-3.5" /></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function RewardCard({ reward, coinName, coinSymbol, canAfford, onBuy, onEdit, onDelete }) {
+      return (
+        <div onClick={onBuy} className={`bg-white dark:bg-slate-800 border-2 border-pink-100 dark:border-pink-900/40 rounded-2xl p-3 flex flex-col items-center text-center transition-all shadow-sm relative ${canAfford ? 'cursor-pointer hover:border-pink-300 dark:hover:border-pink-700 active:scale-95' : 'opacity-60 grayscale cursor-not-allowed'}`}>
+          {!canAfford && <div className="absolute top-2 right-2 text-gray-400 dark:text-gray-500"><Lock size={14}/></div>}
+          {reward.isTimeBased && <div className="absolute top-2 left-2 text-sky-400"><Timer size={14}/></div>}
+          
+          <div className="text-3xl mb-2 bg-pink-50 dark:bg-slate-700 w-14 h-14 flex items-center justify-center rounded-full border border-gray-100 dark:border-slate-600 shadow-inner">
+            {reward.emoji}
+          </div>
+          <h3 className="font-bold text-gray-800 dark:text-gray-200 text-xs leading-tight mb-2 h-8 flex items-center">{reward.name}</h3>
+          <div className="bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 px-2 py-0.5 rounded-lg font-black text-[10px] w-full flex items-center justify-center gap-0.5">
+            {reward.isTimeBased ? `${reward.costPerUnit} ${coinSymbol} / ${reward.timeUnit}m` : `${reward.cost} ${coinSymbol} /u`}
+          </div>
+          <span className="text-[9px] text-gray-400 dark:text-gray-500 font-bold mt-1">
+            Mínimo: {reward.isTimeBased ? `${reward.minPurchaseTime} min` : reward.minPurchase}
+          </span>
+          <div className="flex w-full gap-2 mt-2">
+            <button onClick={(event) => { event.stopPropagation(); onEdit(); }} className="flex-1 p-1.5 rounded-lg text-[10px] font-black text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 hover:bg-sky-100 dark:hover:bg-sky-900/50 transition-colors flex items-center justify-center gap-1">
+              <Edit3 className="w-3.5 h-3.5" /> Editar
+            </button>
+            <button onClick={(event) => { event.stopPropagation(); onDelete(); }} className="flex-1 p-1.5 rounded-lg text-[10px] font-black text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors flex items-center justify-center gap-1">
+              <Trash2 className="w-3.5 h-3.5" /> Eliminar
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function EmptyState({ text }) {
+      return <div className="bg-white/50 dark:bg-slate-800/50 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-2xl p-6 text-center text-gray-400 text-sm font-bold">{text}</div>;
+    }
+
+    function Modal({ children, onClose, title }) {
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="absolute inset-0" onClick={onClose}></div>
+          <div className="relative bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm p-5 shadow-2xl border border-gray-100 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-black text-gray-800 dark:text-white">{title}</h2>
+              <button onClick={onClose} className="p-1.5 bg-gray-100 dark:bg-slate-700 rounded-full text-gray-500 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"><X className="w-4 h-4"/></button>
+            </div>
+            {children}
+          </div>
+          <style dangerouslySetInnerHTML={{__html: `
+            .input-std { width: 100%; padding: 0.75rem; background: #F9FAFB; border: 2px solid #F3F4F6; border-radius: 0.75rem; font-weight: bold; outline: none; transition: border 0.2s; color: #1F2937; }
+            .dark .input-std { background: #0F172A; border-color: #334155; color: #F8FAFC; }
+            .input-std:focus { border-color: #38BDF8; }
+            .toggle-btn { flex: 1; padding: 0.5rem; border-radius: 0.75rem; font-weight: bold; font-size: 0.875rem; border: 2px solid transparent; transition: all 0.2s; }
+            .toggle-btn.inactive { background: #F9FAFB; color: #9CA3AF; }
+            .dark .toggle-btn.inactive { background: #334155; color: #94A3B8; }
+            .active-green { background: #D1FAE5; border-color: #34D399; color: #065F46; }
+            .dark .active-green { background: rgba(16, 185, 129, 0.2); border-color: #059669; color: #6EE7B7; }
+            .active-red { background: #FEE2E2; border-color: #F87171; color: #991B1B; }
+            .dark .active-red { background: rgba(239, 68, 68, 0.2); border-color: #DC2626; color: #FCA5A5; }
+            .active-blue { background: #E0F2FE; border-color: #38BDF8; color: #0369A1; }
+            .dark .active-blue { background: rgba(14, 165, 233, 0.2); border-color: #0284C7; color: #7DD3FC; }
+            .btn-primary { width: 100%; padding: 0.75rem; border-radius: 0.75rem; font-weight: 900; color: white; background: #1F2937; transition: transform 0.1s; }
+            .dark .btn-primary { background: #334155; }
+            .btn-primary:active { transform: scale(0.95); }
+            .btn-pink { width: 100%; padding: 0.75rem; border-radius: 0.75rem; font-weight: 900; color: white; background: #EC4899; transition: transform 0.1s; }
+            .btn-pink:active { transform: scale(0.95); }
+          `}} />
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
