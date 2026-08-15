@@ -2,9 +2,6 @@
 <html lang="es">
 <head>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#0f172a">
-  <meta name="mobile-web-app-capable" content="yes">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Economía de mis hábitos</title>
@@ -167,6 +164,9 @@
         if (saved) return { ...defaultState, ...JSON.parse(saved) };
         return defaultState;
       });
+      // Siempre conserva el estado más reciente, incluso entre dos toques muy
+      // seguidos. Así una actualización no puede usar una copia vieja del check.
+      const gameStateRef = useRef(gameState);
       const [isLoading, setIsLoading] = useState(true);
       const [secretCode] = useState(FIXED_ACCOUNT_CODE);
       const [isLoggedIn] = useState(true);
@@ -192,7 +192,11 @@
         const localData = localStorage.getItem('habitos_data_' + secretCode);
         const localState = localData ? JSON.parse(localData) : null;
         if (localState) {
-          setGameState(prev => ({ ...prev, ...localState }));
+          setGameState(prev => {
+            const merged = { ...prev, ...localState };
+            gameStateRef.current = merged;
+            return merged;
+          });
         }
 
         // Sistema de seguridad: si Firebase falla o tarda por no estar activado, forzamos parar la carga
@@ -204,6 +208,13 @@
         // 2. Conectar a Firebase
         const unsubscribe = db.collection('cuentas').doc(secretCode).onSnapshot((docSnap) => {
           clearTimeout(fallbackTimer);
+          // El estado visual ya fue actualizado al tocar un botón. Ignoramos
+          // el eco temporal de Firebase hasta que esa escritura se confirme,
+          // para que no pueda revivir un check que acabás de deshacer.
+          if (docSnap.metadata.hasPendingWrites) {
+            setIsLoading(false);
+            return;
+          }
           if (docSnap.exists) {
             const remoteData = docSnap.data();
 
@@ -239,6 +250,7 @@
 
             setGameState(prev => {
               const merged = { ...prev, ...data, ...recoveredFields };
+              gameStateRef.current = merged;
               localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(merged));
               return merged;
             });
@@ -271,10 +283,13 @@
       }, [isLoggedIn, secretCode]);
 
       const updateState = (updates, undoMessage = null) => {
-        const newState = { ...gameState, ...updates };
+        const currentState = gameStateRef.current;
+        const resolvedUpdates = typeof updates === 'function' ? updates(currentState) : updates;
+        const newState = { ...currentState, ...resolvedUpdates };
+        gameStateRef.current = newState;
 
         if (undoMessage) {
-          setPastState(gameState); 
+          setPastState(currentState); 
           setToastMsg(undoMessage);
           if (undoTimeout.current) clearTimeout(undoTimeout.current);
           undoTimeout.current = setTimeout(() => {
@@ -289,7 +304,7 @@
           localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(newState));
           // Guardamos sólo los campos cambiados, evitando que un estado viejo
           // de otra pestaña reescriba la mochila completa.
-          db.collection('cuentas').doc(secretCode).set({ ...updates, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
+          db.collection('cuentas').doc(secretCode).set({ ...resolvedUpdates, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
             .catch(err => console.warn("Modo local activo:", err));
         }
       };
@@ -312,6 +327,7 @@
 
       const handleUndo = () => {
         if (pastState) {
+          gameStateRef.current = pastState;
           setGameState(pastState);
           if (isLoggedIn && secretCode) {
             localStorage.setItem('habitos_data_' + secretCode, JSON.stringify(pastState));
@@ -535,39 +551,51 @@
       const habitProgress = gameState.habitProgress || {};
       const getProgress = (habit) => getActiveProgressEntry(habitProgress[habit.id], habit, gameState.habitProgressDay);
 
-      const saveHabitProgress = (habit, entry) => {
-        const nextProgress = { ...habitProgress };
-        if (entry.count > 0) nextProgress[habit.id] = entry;
-        else delete nextProgress[habit.id];
-        updateState({ habitProgress: nextProgress, habitProgressDay: currentHabitDay });
+      const changeHabitProgress = (habit, change) => {
+        updateState(previousState => {
+          const previousProgress = previousState.habitProgress || {};
+          const entry = getActiveProgressEntry(previousProgress[habit.id], habit, previousState.habitProgressDay);
+          const nextEntry = change(entry);
+          const nextProgress = { ...previousProgress };
+          if (nextEntry.count > 0) nextProgress[habit.id] = nextEntry;
+          else delete nextProgress[habit.id];
+          return { habitProgress: nextProgress, habitProgressDay: getHabitDayKey() };
+        });
       };
 
       const incrementHabitProgress = (habit) => {
-        const entry = getProgress(habit);
-        saveHabitProgress(habit, { ...entry, count: entry.count + 1, history: [...entry.history, Date.now()] });
+        changeHabitProgress(habit, entry => ({ ...entry, count: entry.count + 1, history: [...entry.history, Date.now()] }));
       };
 
       const decrementHabitProgress = (habit) => {
-        const entry = getProgress(habit);
-        if (!entry.count) return;
-        saveHabitProgress(habit, { ...entry, count: entry.count - 1, history: entry.history.slice(0, -1) });
+        changeHabitProgress(habit, entry => {
+          if (!entry.count) return entry;
+          return { ...entry, count: entry.count - 1, history: entry.history.slice(0, -1) };
+        });
       };
 
       const toggleHabitProgress = (habit) => {
-        const entry = getProgress(habit);
-        if (entry.count) saveHabitProgress(habit, { ...entry, count: 0, history: [] });
-        else incrementHabitProgress(habit);
+        changeHabitProgress(habit, entry => entry.count
+          ? { ...entry, count: 0, history: [] }
+          : { ...entry, count: 1, history: [...entry.history, Date.now()] }
+        );
       };
 
       const handleHabitClick = (habit) => {
         const change = habit.type === 'good' ? habit.amount : -habit.amount;
-        const entry = getProgress(habit);
-        const nextProgress = {
-          ...habitProgress,
-          [habit.id]: { ...entry, count: entry.count + 1, history: [...entry.history, Date.now()] }
-        };
         updateState(
-          { balance: gameState.balance + change, habitProgress: nextProgress, habitProgressDay: currentHabitDay }, 
+          previousState => {
+            const previousProgress = previousState.habitProgress || {};
+            const entry = getActiveProgressEntry(previousProgress[habit.id], habit, previousState.habitProgressDay);
+            return {
+              balance: previousState.balance + change,
+              habitProgress: {
+                ...previousProgress,
+                [habit.id]: { ...entry, count: entry.count + 1, history: [...entry.history, Date.now()] }
+              },
+              habitProgressDay: getHabitDayKey()
+            };
+          }, 
           habit.type === 'good' ? `¡Sumaste ${habit.amount} ${gameState.coinName}!` : `Restaste ${habit.amount} ${gameState.coinName}`
         );
       };
