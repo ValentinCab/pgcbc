@@ -14,7 +14,7 @@
     *{box-sizing:border-box} [hidden]{display:none!important} body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     button,input,textarea,select{font:inherit} button{cursor:pointer} .app{max-width:1300px;margin:auto;padding:28px 28px 56px}
     header{display:flex;align-items:end;justify-content:space-between;gap:22px;padding:9px 0 26px;border-bottom:1px solid var(--line)}
-    .eyebrow{margin:0 0 4px;color:var(--accent);font-weight:750;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase}.title{margin:0;font-family:Georgia,serif;font-size:clamp(2rem,4vw,3.25rem);line-height:1}.sub{margin:9px 0 0;color:var(--muted)}
+    .eyebrow{margin:0 0 4px;color:var(--accent);font-weight:750;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase}.title{margin:0;font-family:Georgia,serif;font-size:clamp(2rem,4vw,3.25rem);line-height:1}.build-version{margin:4px 0 0;color:var(--accent);font-size:.72rem;font-weight:750;letter-spacing:.04em}.sub{margin:5px 0 0;color:var(--muted)}
     .header-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;justify-content:end}.add{border:0;border-radius:10px;background:var(--accent);color:#fff;padding:11px 16px;font-weight:700;box-shadow:0 3px 0 #27412f}.add:active{transform:translateY(2px);box-shadow:0 1px 0 #27412f}.header-button{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px 13px;font-weight:650}.header-button:hover{border-color:var(--accent);color:var(--accent)}
     .tools{padding:22px 0 18px}.search{position:relative;max-width:700px}.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)} input[type="search"]{width:100%;border:1px solid var(--line);background:transparent;border-radius:11px;padding:13px 16px 13px 42px;outline:0}input[type="search"]:focus{border-color:#98b19c;box-shadow:0 0 0 3px #dce8de}
     .filter-heading{display:flex;gap:9px;align-items:center;margin:18px 0 8px;color:var(--muted);font-size:.85rem}.filters{display:flex;flex-wrap:wrap;gap:7px}.chip{background:var(--tag);border:1px solid transparent;color:#555950;padding:6px 10px;border-radius:999px;font-size:.84rem}.chip:hover{border-color:#b6c3b6}.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}.clear{margin-left:auto;background:transparent;border:0;color:var(--accent);text-decoration:underline;font-size:.8rem}
@@ -29,6 +29,8 @@
     .formula-pad{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;margin-top:12px}.formula-pad button{min-height:35px;padding:2px;border:1px solid var(--line);border-radius:7px;background:var(--tag);color:var(--ink);font-weight:650;font-size:.86rem}.formula-pad button:hover,.formula-pad button:active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}.formula-pad .pad-mode{font-size:.72rem;background:transparent}.formula-pad .span2{grid-column:span 2}
     #formulaDialog[open].formula-layer{position:fixed;inset:0;z-index:20;display:block;max-width:none;width:100%;margin:0;padding:12px;border:0;border-radius:0;background:rgba(31,33,28,.43);overflow:auto}
     #formulaDialog[open].formula-layer .formula-modal{width:min(660px,100%);margin:clamp(12px,7vh,72px) auto 36px;border-radius:16px;background:var(--paper);box-shadow:0 24px 80px rgba(0,0,0,.25)}
+    #tableDialog[open].table-layer{position:fixed;inset:0;z-index:30;display:block;max-width:none;width:100%;margin:0;padding:12px;border:0;border-radius:0;background:rgba(31,33,28,.43);overflow:auto}
+    #tableDialog[open].table-layer .table-modal{width:min(520px,100%);margin:clamp(12px,12vh,110px) auto 36px;border-radius:16px;background:var(--paper);box-shadow:0 24px 80px rgba(0,0,0,.25)}
     @media(max-width:760px){#formulaDialog[open].formula-layer{padding:12px}#formulaDialog[open].formula-layer .formula-modal{margin:8px auto 36px;padding:20px}.formula-pad button{min-height:37px;font-size:.8rem}}@media(min-width:761px){.formula-pad{display:none}}
     /* Fórmulas: la escritura se hace con el teclado nativo del dispositivo. */
     .formula-inline{min-width:0;border:0;pointer-events:auto}
@@ -37,22 +39,32 @@
     #formulaSource:focus{outline:0;border-color:#98b19c;box-shadow:0 0 0 3px #dce8de}
     .formula-preview{display:block;min-height:58px;width:100%;margin-top:10px;padding:12px;border:1px dashed var(--line);border-radius:10px;background:var(--input);font-size:1.25rem}
     .formula-preview::part(menu-toggle),.formula-preview::part(virtual-keyboard-toggle){display:none}
+    /* Herramientas de edición */
+    .tag.subject-tag{background:var(--accent);color:#fff}.subject-line{margin:0 0 12px;color:var(--accent);font-size:.84rem;font-weight:750}
+    .editor-toolbar button.painter-active{background:var(--accent);color:#fff}.editor-toolbar select{height:28px;max-width:94px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-size:.75rem}
+    .concept-link{color:#1f5f42!important;font-weight:750;text-decoration:underline;cursor:pointer}.concept-link:hover{color:var(--accent)!important}
+    .link-picker{display:flex;gap:4px;align-items:center;min-width:165px}.link-picker select{flex:1}.tag-suggestions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.tag-suggestions button{border:1px solid var(--line);background:var(--tag);color:var(--ink);border-radius:999px;padding:4px 8px;font-size:.75rem}.tag-suggestions button.selected{color:var(--accent);border-color:var(--accent)}
+    .formula-inline.formula-selected{outline:2px solid var(--accent)}.formula-inline[data-formula-size="2"]{font-size:.82em}.formula-inline[data-formula-size="3"]{font-size:1em}.formula-inline[data-formula-size="4"]{font-size:1.25em}.formula-inline[data-formula-size="5"]{font-size:1.5em}.filter-label{width:100%;margin-top:4px;color:var(--muted);font-size:.72rem;font-weight:750;text-transform:uppercase;letter-spacing:.06em}.subject-chip{font-weight:750}.toolbar-symbols{display:flex;align-items:center;gap:2px}.editor-toolbar .toolbar-symbols button{min-width:25px;font-size:.94rem}.editor-toolbar .symbol-add{font-size:1rem;font-weight:650;color:var(--accent)}.table-tools{display:flex;align-items:center;gap:2px}.editor-toolbar .table-tools button{min-width:25px;font-size:.78rem}.study-table{border-collapse:collapse;table-layout:fixed;max-width:100%;margin:13px 0;display:table}.study-table td,.study-table th{min-width:76px;border:1px solid #6d736d;padding:7px 8px;vertical-align:middle;text-align:left}.study-table.no-borders td,.study-table.no-borders th{border:0}.study-table td:focus,.study-table th:focus,.study-table td.table-cell-selected,.study-table th.table-cell-selected{outline:2px solid var(--accent);outline-offset:-2px;background:color-mix(in srgb,var(--accent) 12%,transparent)}.table-size-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin:12px 0}.table-size-grid button{aspect-ratio:1;border:1px solid var(--line);border-radius:4px;background:var(--input)}.table-size-grid button.selected{background:var(--accent);border-color:var(--accent)}.table-size-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.table-size-inputs label{margin:0}.table-size-inputs input{margin-top:5px}.rich-editor{overflow-x:auto}@media(max-width:760px){.study-table td,.study-table th{min-width:68px;padding:6px}.table-size-grid{grid-template-columns:repeat(6,1fr)}}
+    .study-table td,.study-table th{position:relative}.study-table td.table-cell-selected,.study-table th.table-cell-selected{background:transparent}
+    .table-size-grid{grid-template-columns:repeat(6,1fr);gap:4px;margin:9px 0}.table-size-grid button{aspect-ratio:auto;height:36px}
+    .editor-toolbar .table-tools button.table-align{display:grid;place-items:center}.align-lines{display:grid;gap:2px;width:14px}.align-lines i{display:block;height:1.5px;background:currentColor;border-radius:2px}.align-lines i:nth-child(2),.align-lines i:nth-child(4){width:68%}.align-left i:nth-child(2),.align-left i:nth-child(4){margin-right:auto}.align-center i:nth-child(2),.align-center i:nth-child(4){margin-inline:auto}.align-right i:nth-child(2),.align-right i:nth-child(4){margin-left:auto}
+    .editor-toolbar .table-fill{width:24px;height:24px;padding:1px;border:1px solid var(--line);border-radius:5px;background:var(--paper)}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/mathlive"></script>
 </head>
 <body>
   <main class="app">
     <header>
-      <div><h1 class="title">Mi glosario</h1><p class="sub">Conceptos, definiciones y conexiones para estudiar mejor.</p></div>
+      <div><h1 class="title">Mi glosario</h1><p class="build-version">Mi glosario v28</p><p class="sub">Conceptos, definiciones y conexiones para estudiar mejor.</p></div>
       <div class="header-actions"><button class="header-button" id="flashcardsButton">Flashcards</button><button class="header-button" id="themeButton" aria-pressed="false">◐ Modo oscuro</button><button class="add" id="newButton">+ Agregar concepto</button></div>
     </header>
     <section class="tools" aria-label="Búsqueda y filtros">
       <div class="search"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" id="search" placeholder="Buscar concepto, definición o hashtag…" autocomplete="off"></div>
-      <div class="filter-heading"><span>Filtrar por hashtag</span><button class="clear" id="clearFilters" hidden>Limpiar filtros</button></div>
+      <div class="filter-heading"><span>Filtrar por materia y hashtag</span><button class="clear" id="clearFilters" hidden>Limpiar filtros</button></div>
       <div class="filters" id="filters"></div>
     </section>
     <section class="workspace">
-      <div><div class="list-head"><span id="count"></span><span>Orden alfabético</span></div><div class="terms" id="terms"></div></div>
+      <div><div class="list-head"><span id="count"></span></div><div class="terms" id="terms"></div></div>
       <aside class="preview" id="preview" aria-live="polite"></aside>
     </section>
   </main>
@@ -68,9 +80,10 @@
     <form class="modal" id="conceptForm" method="dialog">
       <div class="modal-head"><h2 id="dialogTitle">Nuevo concepto</h2><button class="close" type="button" id="closeDialog" aria-label="Cerrar">×</button></div>
       <label for="termInput">Concepto</label><input id="termInput" required placeholder="Ej.: Hemoglobina">
-      <label for="definitionInput">Definición breve</label><div class="editor-toolbar" aria-label="Formato de texto"><button type="button" data-command="bold" title="Negrita"><strong>N</strong></button><button type="button" data-command="italic" title="Cursiva"><em>C</em></button><button type="button" data-command="underline" title="Subrayado"><u>S</u></button><span class="toolbar-divider"></span><div class="color-palette" aria-label="Color de texto"><button type="button" class="color-swatch" data-color="#e53935" style="background:#e53935" title="Rojo" aria-label="Rojo"></button><button type="button" class="color-swatch" data-color="#f57c00" style="background:#f57c00" title="Naranja" aria-label="Naranja"></button><button type="button" class="color-swatch" data-color="#d7a800" style="background:#d7a800" title="Amarillo" aria-label="Amarillo"></button><button type="button" class="color-swatch" data-color="#168153" style="background:#168153" title="Verde" aria-label="Verde"></button><button type="button" class="color-swatch" data-color="#1476c9" style="background:#1476c9" title="Azul" aria-label="Azul"></button><button type="button" class="color-swatch" data-color="#5146c7" style="background:#5146c7" title="Índigo" aria-label="Índigo"></button><button type="button" class="color-swatch" data-color="#8b3fc1" style="background:#8b3fc1" title="Violeta" aria-label="Violeta"></button><button type="button" class="color-swatch" data-color="#d33d91" style="background:#d33d91" title="Rosa" aria-label="Rosa"></button><button type="button" class="color-swatch" data-color="#8a5a3b" style="background:#8a5a3b" title="Marrón" aria-label="Marrón"></button><button type="button" class="color-swatch" data-color="#1f5f42" style="background:#1f5f42" title="Verde oscuro" aria-label="Verde oscuro"></button><button type="button" class="color-swatch" data-color="#1d3f6d" style="background:#1d3f6d" title="Azul oscuro" aria-label="Azul oscuro"></button><button type="button" class="color-swatch" data-color="#8b1e2d" style="background:#8b1e2d" title="Rojo oscuro" aria-label="Rojo oscuro"></button><button type="button" class="color-swatch" data-color="#6b7280" style="background:#6b7280" title="Gris" aria-label="Gris"></button></div><span class="toolbar-divider"></span><button type="button" data-symbol="→" title="Insertar flecha">→</button><button type="button" data-symbol="←" title="Insertar flecha">←</button><button type="button" data-symbol="↔" title="Insertar flecha">↔</button><button type="button" data-symbol="⇒" title="Insertar implicación">⇒</button><button type="button" data-symbol="≠" title="Insertar símbolo">≠</button><button type="button" data-symbol="≤" title="Insertar símbolo">≤</button><button type="button" data-symbol="≥" title="Insertar símbolo">≥</button><button type="button" data-symbol="×" title="Insertar multiplicación">×</button><button type="button" data-symbol="÷" title="Insertar división">÷</button><span class="toolbar-divider"></span><button type="button" class="formula-trigger" data-formula title="Insertar fórmula">ƒx</button></div><div id="definitionInput" class="rich-editor" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Una explicación corta para el detalle."></div>
-      <label for="notesInput">Explicaciones extra</label><div class="editor-toolbar" aria-label="Formato de texto"><button type="button" data-command="bold" title="Negrita"><strong>N</strong></button><button type="button" data-command="italic" title="Cursiva"><em>C</em></button><button type="button" data-command="underline" title="Subrayado"><u>S</u></button><span class="toolbar-divider"></span><div class="color-palette" aria-label="Color de texto"><button type="button" class="color-swatch" data-color="#e53935" style="background:#e53935" title="Rojo" aria-label="Rojo"></button><button type="button" class="color-swatch" data-color="#f57c00" style="background:#f57c00" title="Naranja" aria-label="Naranja"></button><button type="button" class="color-swatch" data-color="#d7a800" style="background:#d7a800" title="Amarillo" aria-label="Amarillo"></button><button type="button" class="color-swatch" data-color="#168153" style="background:#168153" title="Verde" aria-label="Verde"></button><button type="button" class="color-swatch" data-color="#1476c9" style="background:#1476c9" title="Azul" aria-label="Azul"></button><button type="button" class="color-swatch" data-color="#5146c7" style="background:#5146c7" title="Índigo" aria-label="Índigo"></button><button type="button" class="color-swatch" data-color="#8b3fc1" style="background:#8b3fc1" title="Violeta" aria-label="Violeta"></button><button type="button" class="color-swatch" data-color="#d33d91" style="background:#d33d91" title="Rosa" aria-label="Rosa"></button><button type="button" class="color-swatch" data-color="#8a5a3b" style="background:#8a5a3b" title="Marrón" aria-label="Marrón"></button><button type="button" class="color-swatch" data-color="#1f5f42" style="background:#1f5f42" title="Verde oscuro" aria-label="Verde oscuro"></button><button type="button" class="color-swatch" data-color="#1d3f6d" style="background:#1d3f6d" title="Azul oscuro" aria-label="Azul oscuro"></button><button type="button" class="color-swatch" data-color="#8b1e2d" style="background:#8b1e2d" title="Rojo oscuro" aria-label="Rojo oscuro"></button><button type="button" class="color-swatch" data-color="#6b7280" style="background:#6b7280" title="Gris" aria-label="Gris"></button></div><span class="toolbar-divider"></span><button type="button" data-symbol="→" title="Insertar flecha">→</button><button type="button" data-symbol="←" title="Insertar flecha">←</button><button type="button" data-symbol="↔" title="Insertar flecha">↔</button><button type="button" data-symbol="⇒" title="Insertar implicación">⇒</button><button type="button" data-symbol="≠" title="Insertar símbolo">≠</button><button type="button" data-symbol="≤" title="Insertar símbolo">≤</button><button type="button" data-symbol="≥" title="Insertar símbolo">≥</button><button type="button" data-symbol="×" title="Insertar multiplicación">×</button><button type="button" data-symbol="÷" title="Insertar división">÷</button><span class="toolbar-divider"></span><button type="button" class="formula-trigger" data-formula title="Insertar fórmula">ƒx</button></div><div id="notesInput" class="rich-editor" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Ejemplos, relaciones, cosas que te cuesta recordar…"></div>
-      <label for="tagsInput">Hashtags</label><input id="tagsInput" placeholder="Unidad 1, Sangre, Molécula"><p class="hint">Separalos con coma. No hace falta escribir #.</p>
+      <label for="definitionInput">Definición breve</label><div class="editor-toolbar" aria-label="Formato de texto"><button type="button" data-command="bold" title="Negrita"><strong>N</strong></button><button type="button" data-command="italic" title="Cursiva"><em>C</em></button><button type="button" data-command="underline" title="Subrayado"><u>S</u></button><button type="button" data-copy-format title="Copiar formato">🖌</button><button type="button" data-apply-format title="Aplicar formato copiado">▣</button><select data-font-size title="Tamaño de fuente" aria-label="Tamaño de fuente"><option value="3">Texto</option><option value="2">Chico</option><option value="4">Grande</option><option value="5">Muy grande</option></select><span class="toolbar-divider"></span><div class="color-palette" aria-label="Color de texto"><button type="button" class="color-swatch" data-color="#111111" style="background:#111111" title="Negro" aria-label="Negro"></button><button type="button" class="color-swatch" data-color="#e53935" style="background:#e53935" title="Rojo" aria-label="Rojo"></button><button type="button" class="color-swatch" data-color="#168153" style="background:#168153" title="Verde" aria-label="Verde"></button><button type="button" class="color-swatch" data-color="#1476c9" style="background:#1476c9" title="Azul" aria-label="Azul"></button><button type="button" class="color-swatch" data-color="#1f5f42" style="background:#1f5f42" title="Verde oscuro" aria-label="Verde oscuro"></button></div><span class="toolbar-divider"></span><button type="button" data-symbol="→" title="Insertar flecha">→</button><button type="button" data-symbol="←" title="Insertar flecha">←</button><button type="button" data-symbol="↔" title="Insertar flecha">↔</button><button type="button" data-symbol="⇒" title="Insertar implicación">⇒</button><button type="button" data-symbol="≠" title="Insertar símbolo">≠</button><button type="button" data-symbol="≤" title="Insertar símbolo">≤</button><button type="button" data-symbol="≥" title="Insertar símbolo">≥</button><button type="button" data-symbol="×" title="Insertar multiplicación">×</button><button type="button" data-symbol="÷" title="Insertar división">÷</button><span class="toolbar-divider"></span><div class="link-picker"><select data-link-target aria-label="Concepto para vincular"><option value="">Vincular a…</option></select><button type="button" data-create-link title="Crear hipervínculo">🔗</button><button type="button" data-remove-link title="Quitar hipervínculo">⛓̸</button></div><button type="button" class="formula-trigger" data-formula title="Insertar fórmula">ƒx</button></div><div id="definitionInput" class="rich-editor" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Una explicación corta para el detalle."></div>
+      <label for="notesInput">Explicaciones extra</label><div class="editor-toolbar" aria-label="Formato de texto"><button type="button" data-command="bold" title="Negrita"><strong>N</strong></button><button type="button" data-command="italic" title="Cursiva"><em>C</em></button><button type="button" data-command="underline" title="Subrayado"><u>S</u></button><button type="button" data-copy-format title="Copiar formato">🖌</button><button type="button" data-apply-format title="Aplicar formato copiado">▣</button><select data-font-size title="Tamaño de fuente" aria-label="Tamaño de fuente"><option value="3">Texto</option><option value="2">Chico</option><option value="4">Grande</option><option value="5">Muy grande</option></select><span class="toolbar-divider"></span><div class="color-palette" aria-label="Color de texto"><button type="button" class="color-swatch" data-color="#111111" style="background:#111111" title="Negro" aria-label="Negro"></button><button type="button" class="color-swatch" data-color="#e53935" style="background:#e53935" title="Rojo" aria-label="Rojo"></button><button type="button" class="color-swatch" data-color="#168153" style="background:#168153" title="Verde" aria-label="Verde"></button><button type="button" class="color-swatch" data-color="#1476c9" style="background:#1476c9" title="Azul" aria-label="Azul"></button><button type="button" class="color-swatch" data-color="#1f5f42" style="background:#1f5f42" title="Verde oscuro" aria-label="Verde oscuro"></button></div><span class="toolbar-divider"></span><button type="button" data-symbol="→" title="Insertar flecha">→</button><button type="button" data-symbol="←" title="Insertar flecha">←</button><button type="button" data-symbol="↔" title="Insertar flecha">↔</button><button type="button" data-symbol="⇒" title="Insertar implicación">⇒</button><button type="button" data-symbol="≠" title="Insertar símbolo">≠</button><button type="button" data-symbol="≤" title="Insertar símbolo">≤</button><button type="button" data-symbol="≥" title="Insertar símbolo">≥</button><button type="button" data-symbol="×" title="Insertar multiplicación">×</button><button type="button" data-symbol="÷" title="Insertar división">÷</button><span class="toolbar-divider"></span><div class="link-picker"><select data-link-target aria-label="Concepto para vincular"><option value="">Vincular a…</option></select><button type="button" data-create-link title="Crear hipervínculo">🔗</button><button type="button" data-remove-link title="Quitar hipervínculo">⛓̸</button></div><button type="button" class="formula-trigger" data-formula title="Insertar fórmula">ƒx</button></div><div id="notesInput" class="rich-editor" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Ejemplos, relaciones, cosas que te cuesta recordar…"></div>
+      <label for="subjectInput">Materia</label><input id="subjectInput" list="subjectsList"><datalist id="subjectsList"></datalist>
+      <label for="tagsInput">Hashtags</label><input id="tagsInput" placeholder="Unidad 1, Sangre, Molécula"><p class="hint">Separalos con coma. No hace falta escribir #.</p><div class="tag-suggestions" id="tagSuggestions" aria-label="Hashtags existentes"></div>
       <div class="image-picker"><label for="imageInput">Imágenes o apuntes visuales</label><input id="imageInput" type="file" accept="image/*" multiple><p class="hint">Podés elegir varias. Esta maqueta las reduce antes de guardarlas.</p><div class="image-preview-grid" id="imagePreviews"></div></div>
       <div class="modal-footer"><button type="button" class="secondary delete" id="deleteButton" hidden>Eliminar</button><button type="button" class="secondary" id="cancelButton">Cancelar</button><button class="save" value="default">Guardar concepto</button></div>
     </form>
@@ -84,6 +97,16 @@
       <textarea id="formulaSource" inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="Escritura de fórmula" placeholder="Ej.: (a+b)/(x-y) = 2, x^2, H_2O o sqrt(25)"></textarea>
       <math-field id="formulaPreview" class="formula-preview" read-only aria-label="Vista previa de fórmula"></math-field>
       <div class="modal-footer"><button class="secondary" type="button" id="cancelFormulaButton">Cancelar</button><button class="save" type="button" id="insertFormulaButton">Insertar fórmula</button></div>
+    </div>
+  </dialog>
+
+  <dialog id="tableDialog">
+    <div class="modal table-modal">
+      <div class="modal-head"><h2>Tabla</h2><button class="close" type="button" id="closeTableDialog" aria-label="Cerrar tabla">×</button></div>
+      <p class="hint">Elegí el tamaño inicial. Después podés sumar o quitar filas y columnas desde la barra.</p>
+      <div class="table-size-grid" id="tableSizeGrid" aria-label="Elegir tamaño de tabla"></div>
+      <div class="table-size-inputs"><label>Filas <input id="tableRows" type="number" min="1" max="12" value="3"></label><label>Columnas <input id="tableColumns" type="number" min="1" max="12" value="3"></label></div>
+      <div class="modal-footer"><button class="secondary" type="button" id="cancelTableButton">Cancelar</button><button class="save" type="button" id="insertTableButton">Insertar tabla</button></div>
     </div>
   </dialog>
 
@@ -146,6 +169,8 @@
     const dbKey='mi-glosario-demo-v2';
     let concepts=JSON.parse(localStorage.getItem(dbKey)||'null')||starter;
     const localImagesByConcept=new Map(concepts.filter(c=>(c.images||[]).length).map(c=>[c.id,c.images]));
+    const favoritesKey='mi-glosario-symbol-favorites';
+    let favoriteSymbols=JSON.parse(localStorage.getItem(favoritesKey)||'[]').filter(symbol=>typeof symbol==='string'&&symbol.trim()).slice(0,24);
     let firebaseReady=false,firebaseSyncTimer=null,firebaseErrorShown=false;
     let selectedId=concepts[0]?.id, activeTags=new Set(), editingId=null, flashDeck=[], flashIndex=0, flashFlipped=false, flashOrder='term', termsObserver=null, ignoreTermObserver=true, mobileListHighlight=false, mobileFocusId=null, detailOpenTimer=null, mobileFocusFrame=null;
     const themeKey='mi-glosario-theme';
@@ -159,7 +184,7 @@
     function saveLocal(){rememberLocalImages();localStorage.setItem(dbKey,JSON.stringify(concepts))}
     function conceptForCloud(c){const {images,...cloudConcept}=c;return cloudConcept}
     function conceptFromCloud(c){return {...c,images:(c.images||localImagesByConcept.get(c.id)||[])}}
-    async function writeCloud(){try{await setDoc(glossaryRef,{concepts:concepts.map(conceptForCloud),updatedAt:serverTimestamp()},{merge:true})}catch(error){console.error('FIRESTORE_WRITE_ERROR',error);if(!firebaseErrorShown){firebaseErrorShown=true;alert('No se pudo sincronizar con Firebase. Tus cambios siguen guardados en este dispositivo.')}}}
+    async function writeCloud(){try{await setDoc(glossaryRef,{concepts:concepts.map(conceptForCloud),favoriteSymbols,updatedAt:serverTimestamp()},{merge:true})}catch(error){console.error('FIRESTORE_WRITE_ERROR',error);if(!firebaseErrorShown){firebaseErrorShown=true;alert('No se pudo sincronizar con Firebase. Tus cambios siguen guardados en este dispositivo.')}}}
     function queueCloudWrite(){clearTimeout(firebaseSyncTimer);firebaseSyncTimer=setTimeout(writeCloud,250)}
     function save(){saveLocal();if(firebaseReady)queueCloudWrite()}
     async function initFirebase(){
@@ -175,24 +200,153 @@
         // La interfaz sigue funcionando con localStorage, incluso desde file://.
       }
     }
-    function startFirebaseSync(){if(!glossaryRef||!onSnapshot)return;onSnapshot(glossaryRef,async snapshot=>{firebaseReady=true;const cloudConcepts=snapshot.data()?.concepts;if(Array.isArray(cloudConcepts)){concepts=cloudConcepts.map(conceptFromCloud);selectedId=concepts.some(c=>c.id===selectedId)?selectedId:concepts[0]?.id;saveLocal();render();return}await writeCloud()},error=>{firebaseReady=false;console.error('FIRESTORE_LISTEN_ERROR',error);if(!firebaseErrorShown){firebaseErrorShown=true;alert('Firebase no se pudo conectar. La app seguirá usando la copia guardada en este dispositivo.')}})}
+    function startFirebaseSync(){if(!glossaryRef||!onSnapshot)return;onSnapshot(glossaryRef,async snapshot=>{firebaseReady=true;const data=snapshot.data()||{},cloudConcepts=data.concepts;if(Array.isArray(data.favoriteSymbols)){favoriteSymbols=[...new Set(data.favoriteSymbols.filter(symbol=>typeof symbol==='string'&&symbol.trim()))].slice(0,24);localStorage.setItem(favoritesKey,JSON.stringify(favoriteSymbols));renderFavoriteSymbols()}if(Array.isArray(cloudConcepts)){concepts=cloudConcepts.map(conceptFromCloud);selectedId=concepts.some(c=>c.id===selectedId)?selectedId:concepts[0]?.id;saveLocal();render();return}await writeCloud()},error=>{firebaseReady=false;console.error('FIRESTORE_LISTEN_ERROR',error);if(!firebaseErrorShown){firebaseErrorShown=true;alert('Firebase no se pudo conectar. La app seguirá usando la copia guardada en este dispositivo.')}})}
     function sorted(){return [...concepts].sort((a,b)=>collator.compare(a.term,b.term))}
-    function shown(){const q=$('#search').value.trim().toLocaleLowerCase('es');return sorted().filter(c=>{const text=[c.term,plainRich(c.definition),plainRich(c.notes),...c.tags].join(' ').toLocaleLowerCase('es');return (!q||text.includes(q))&&[...activeTags].every(tag=>c.tags.includes(tag))})}
+    function shown(){const q=$('#search').value.trim().toLocaleLowerCase('es');return sorted().filter(c=>{const tags=displayTags(c),text=[c.term,plainRich(c.definition),plainRich(c.notes),...tags].join(' ').toLocaleLowerCase('es');return (!q||text.includes(q))&&[...activeTags].every(tag=>tags.includes(tag))})}
     function allTags(){return [...new Set(concepts.flatMap(c=>c.tags))].sort((a,b)=>collator.compare(a,b))}
-    function renderFilters(){const box=$('#filters'),tags=allTags();box.innerHTML=tags.map(t=>`<button class="chip ${activeTags.has(t)?'active':''}" data-tag="${esc(t)}">#${esc(t)}</button>`).join('');box.querySelectorAll('[data-tag]').forEach(b=>b.onclick=()=>{const tag=b.dataset.tag;activeTags.has(tag)?activeTags.delete(tag):activeTags.add(tag);render()});$('#clearFilters').hidden=!activeTags.size}
-    function renderList(){const items=shown(), box=$('#terms');$('#count').textContent=`${items.length} concepto${items.length===1?'':'s'}`;if(!items.length){box.innerHTML='<p class="no-results">No encontré ningún concepto con esa búsqueda o combinación de hashtags.</p>';return}let last='';box.innerHTML=items.map(c=>{let l=c.term.trim().charAt(0).toLocaleUpperCase('es'),letter=l!==last?(last=l,`<div class="letter">${esc(l)}</div>`):'',active=c.id===selectedId&&(!isCompact()||mobileListHighlight),focused=c.id===mobileFocusId;return `${letter}<button class="term ${active?'active':''} ${focused?'focused':''}" data-id="${c.id}"><span class="term-title">${esc(c.term)}</span><span class="mini-tags">${c.tags.slice(0,3).map(t=>`<span>#${esc(t)}</span>`).join('')}</span></button>`}).join('');box.querySelectorAll('.term').forEach(b=>b.onclick=()=>{ignoreTermObserver=true;selectedId=b.dataset.id;if(isCompact())mobileListHighlight=true;renderList();renderPreview();if(isCompact())openMobileDetail(85)});observeTerms();if(isCompact())requestAnimationFrame(updateMobileFocus)}
+    function chipMarkup(tag,subject=false){return `<button class="chip ${subject?'subject-chip ':''}${activeTags.has(tag)?'active':''}" data-tag="${esc(tag)}">${subject?'':'#'}${esc(tag)}</button>`}
+    function renderFilters(){const box=$('#filters'),subjects=allSubjects(),tags=allTags().filter(t=>!subjects.includes(t));box.innerHTML=`${subjects.length?`<div class="filter-label">Materias</div>${subjects.map(t=>chipMarkup(t,true)).join('')}`:''}${tags.length?`${subjects.length?'<div class="filter-label">Otros hashtags</div>':''}${tags.map(t=>chipMarkup(t)).join('')}`:''}`;box.querySelectorAll('[data-tag]').forEach(b=>b.onclick=()=>{const tag=b.dataset.tag;activeTags.has(tag)?activeTags.delete(tag):activeTags.add(tag);render()});$('#clearFilters').hidden=!activeTags.size}
+    function renderList(){const items=shown(), box=$('#terms');$('#count').textContent=`${items.length} concepto${items.length===1?'':'s'}`;if(!items.length){box.innerHTML='<p class="no-results">No encontré ningún concepto con esa búsqueda o combinación de hashtags.</p>';return}let last='';box.innerHTML=items.map(c=>{let l=c.term.trim().charAt(0).toLocaleUpperCase('es'),letter=l!==last?(last=l,`<div class="letter">${esc(l)}</div>`):'',active=c.id===selectedId&&(!isCompact()||mobileListHighlight),focused=c.id===mobileFocusId;return `${letter}<button class="term ${active?'active':''} ${focused?'focused':''}" data-id="${c.id}"><span class="term-title">${esc(c.term)}</span><span class="mini-tags">${displayTags(c).slice(0,3).map(t=>`<span>#${esc(t)}</span>`).join('')}</span></button>`}).join('');box.querySelectorAll('.term').forEach(b=>b.onclick=()=>{ignoreTermObserver=true;selectedId=b.dataset.id;if(isCompact())mobileListHighlight=true;renderList();renderPreview();if(isCompact())openMobileDetail(85)});observeTerms();if(isCompact())requestAnimationFrame(updateMobileFocus)}
     function selectedConcept(){return concepts.find(x=>x.id===selectedId)||shown()[0]}
-    function detailMarkup(c){const images=(c.images||[]).map(src=>`<img src="${src}" alt="Apunte visual de ${esc(c.term)}">`).join('');return `<div class="preview-top"><h2>${esc(c.term)}</h2><button class="edit" data-edit-detail>Editar</button></div><div class="preview-body"><div class="tag-list">${c.tags.map(t=>`<button class="tag" data-preview-tag="${esc(t)}">#${esc(t)}</button>`).join('')}</div><div class="definition">${richHtml(c.definition)}</div>${plainRich(c.notes).trim()?`<div class="detail">${richHtml(c.notes)}</div>`:''}${images?`<div class="gallery">${images}</div>`:''}</div>`}
-    function bindDetailActions(container,c){container.querySelector('[data-edit-detail]').onclick=()=>{closeMobileDetail();openEditor(c.id)};container.querySelectorAll('[data-preview-tag]').forEach(b=>b.onclick=()=>{activeTags.add(b.dataset.previewTag);closeMobileDetail();render()})}
+    function detailMarkup(c){const images=(c.images||[]).map(src=>`<img src="${src}" alt="Apunte visual de ${esc(c.term)}">`).join(''),subject=subjectOf(c),tags=displayTags(c).filter(t=>t!==subject);return `<div class="preview-top"><h2>${esc(c.term)}</h2><button class="edit" data-edit-detail>Editar</button></div><div class="preview-body"><div class="tag-list">${subject?`<button class="tag subject-tag" data-preview-tag="${esc(subject)}">${esc(subject)}</button>`:''}${tags.map(t=>`<button class="tag" data-preview-tag="${esc(t)}">#${esc(t)}</button>`).join('')}</div><div class="definition">${richHtml(c.definition)}</div>${plainRich(c.notes).trim()?`<div class="detail">${richHtml(c.notes)}</div>`:''}${images?`<div class="gallery">${images}</div>`:''}</div>`}
+    function openLinkedConcept(id){const target=concepts.find(c=>c.id===id);if(!target)return;selectedId=id;render();if(isCompact())openMobileDetail()}
+    function bindDetailActions(container,c){
+      container.querySelector('[data-edit-detail]').onclick=()=>{closeMobileDetail();openEditor(c.id)};
+      container.querySelectorAll('[data-preview-tag]').forEach(b=>b.onclick=()=>{activeTags.add(b.dataset.previewTag);closeMobileDetail();render()});
+      container.querySelectorAll('.concept-link').forEach(link=>link.onclick=event=>{event.preventDefault();event.stopPropagation();openLinkedConcept(link.dataset.conceptId)});
+    }
     function renderPreview(){let c=selectedConcept(),preview=$('#preview');if(!c){preview.innerHTML='<div class="preview-body"><p class="empty">Elegí o agregá un concepto para ver su ficha.</p></div>';return}selectedId=c.id;preview.innerHTML=detailMarkup(c);preview.scrollTop=0;bindDetailActions(preview,c)}
     function updateMobileFocus(){if(!isCompact())return;const terms=[...document.querySelectorAll('#terms .term')];if(!terms.length)return;const middle=window.innerHeight*.52;let closest=terms.reduce((best,term)=>Math.abs((term.getBoundingClientRect().top+term.getBoundingClientRect().bottom)/2-middle)<best.distance?{term,distance:Math.abs((term.getBoundingClientRect().top+term.getBoundingClientRect().bottom)/2-middle)}:best,{term:null,distance:Infinity}).term;if(!closest)return;mobileFocusId=closest.dataset.id;terms.forEach(term=>term.classList.toggle('focused',term===closest))}
     function closeMobileDetail(){clearTimeout(detailOpenTimer);setOverlay('mobileDetailOverlay',false);if(isCompact()){mobileListHighlight=false;document.querySelectorAll('#terms .term').forEach(term=>term.classList.remove('active'));requestAnimationFrame(updateMobileFocus)}}
     function openMobileDetail(delay=0){clearTimeout(detailOpenTimer);const show=()=>{const c=selectedConcept(),content=$('#mobileDetailContent');if(!c)return;selectedId=c.id;content.innerHTML=detailMarkup(c);bindDetailActions(content,c);setOverlay('mobileDetailOverlay',true)};detailOpenTimer=delay?setTimeout(show,delay):show()}
     function observeTerms(){termsObserver?.disconnect();const root=$('#terms');if(!window.IntersectionObserver||!root)return;root.onscroll=()=>{ignoreTermObserver=false};termsObserver=new IntersectionObserver(entries=>{if(ignoreTermObserver)return;let hit=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(hit&&hit.target.dataset.id!==selectedId){selectedId=hit.target.dataset.id;renderPreview();root.querySelectorAll('.term').forEach(x=>x.classList.toggle('active',x.dataset.id===selectedId))}}, {root,rootMargin:'-18% 0px -62% 0px',threshold:[.05,.5]});root.querySelectorAll('.term').forEach(x=>termsObserver.observe(x))}
     function render(){ignoreTermObserver=true;renderFilters();renderList();renderPreview()}
-    let activeRichEditor=null,richSelection=null,formulaInsertRange=null,formulaTargetEditor=null,editingFormulaNode=null,formulaPadMode='letters',formulaPadUppercase=false,formulaPadKeys=[];
+    let activeRichEditor=null,richSelection=null,windowFocusSelection=null,restoreFocusTimer=null,formulaInsertRange=null,formulaTargetEditor=null,editingFormulaNode=null,selectedFormulaNode=null,selectedTableCell=null,tableSelectionAnchor=null,selectedTableCells=[],tableResizeState=null,copiedFormat=null,formulaClipboard=null,formulaPadMode='letters',formulaPadUppercase=false,formulaPadKeys=[];
     function rememberRichSelection(){const selection=window.getSelection();if(!selection?.rangeCount)return;const range=selection.getRangeAt(0),editor=range.commonAncestorContainer.nodeType===1?range.commonAncestorContainer:range.commonAncestorContainer.parentElement;const container=editor?.closest?.('.rich-editor');if(container){activeRichEditor=container;richSelection=range.cloneRange()}}
+    function preserveEditorCursor(){if(richSelection?.cloneRange&&activeRichEditor?.isConnected)windowFocusSelection={editor:activeRichEditor,range:richSelection.cloneRange()}}
+    function restoreEditorCursor(){clearTimeout(restoreFocusTimer);restoreFocusTimer=setTimeout(()=>{const saved=windowFocusSelection;if(!saved?.editor?.isConnected||!saved.editor.contains(saved.range.commonAncestorContainer)||!$('#conceptDialog').open)return;requestAnimationFrame(()=>requestAnimationFrame(()=>{if(!saved.editor.isConnected||!saved.editor.contains(saved.range.commonAncestorContainer)||!$('#conceptDialog').open)return;saved.editor.focus({preventScroll:true});const selection=window.getSelection();selection.removeAllRanges();selection.addRange(saved.range);richSelection=saved.range.cloneRange();windowFocusSelection=null}))},80)}
     function useRichCommand(command,value=null){const editor=activeRichEditor||$('#definitionInput');if(!editor)return;editor.focus();if(richSelection&&editor.contains(richSelection.commonAncestorContainer)){const selection=window.getSelection();selection.removeAllRanges();selection.addRange(richSelection)}document.execCommand(command,false,value);rememberRichSelection()}
+    function selectionRangeInEditor(){const selection=window.getSelection();if(!selection?.rangeCount)return null;const range=selection.getRangeAt(0);return activeRichEditor?.contains(range.commonAncestorContainer)?range:null}
+    function selectFormula(node){if(selectedFormulaNode&&selectedFormulaNode!==node)selectedFormulaNode.classList.remove('formula-selected');selectedFormulaNode=node||null;node?.classList.add('formula-selected')}
+    function copyFormat(){const range=selectionRangeInEditor();if(!range)return;const element=(range.startContainer.nodeType===1?range.startContainer:range.startContainer.parentElement);const style=getComputedStyle(element);copiedFormat={color:style.color,bold:document.queryCommandState('bold'),italic:document.queryCommandState('italic'),underline:document.queryCommandState('underline')};document.querySelectorAll('[data-copy-format]').forEach(b=>b.classList.add('painter-active'))}
+    function applyCopiedFormat(){if(!copiedFormat)return;useRichCommand('foreColor',copiedFormat.color);['bold','italic','underline'].forEach(command=>{if(document.queryCommandState(command)!==copiedFormat[command])useRichCommand(command)});document.querySelectorAll('[data-copy-format]').forEach(b=>b.classList.remove('painter-active'))}
+    function applyFontSize(size){if(selectedFormulaNode?.isConnected){selectedFormulaNode.dataset.formulaSize=String(size);return}useRichCommand('fontSize',size)}
+    function createManualLink(select){const id=select.value;if(!id)return;const range=selectionRangeInEditor();if(!range||range.collapsed){alert('Primero seleccioná la palabra o frase que querés vincular.');return}const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);document.execCommand('createLink',false,`concept:${id}`);const anchor=[...activeRichEditor.querySelectorAll('a')].find(link=>link.getAttribute('href')===`concept:${id}`);if(anchor){anchor.className='concept-link';anchor.dataset.conceptId=id}rememberRichSelection()}
+    function removeManualLink(){const range=selectionRangeInEditor();const anchor=(range?.startContainer.nodeType===1?range.startContainer:range?.startContainer.parentElement)?.closest?.('a.concept-link');if(!anchor){alert('Poné el cursor dentro del vínculo que querés quitar.');return}const span=document.createElement('span');span.className='link-suppressed';span.textContent=anchor.textContent;anchor.replaceWith(span);const nextRange=document.createRange(),selection=window.getSelection();nextRange.selectNodeContents(span);selection.removeAllRanges();selection.addRange(nextRange);richSelection=nextRange.cloneRange()}
+    function cutFormula(){if(!selectedFormulaNode?.isConnected){alert('Primero tocá una fórmula para seleccionarla.');return}formulaClipboard={latex:selectedFormulaNode.dataset.latex,source:selectedFormulaNode.dataset.formulaSource,size:selectedFormulaNode.dataset.formulaSize};selectedFormulaNode.remove();selectedFormulaNode=null;activeRichEditor?.focus()}
+    function pasteFormula(){if(!formulaClipboard){alert('Primero seleccioná una fórmula y tocá “Cortar fórmula”.');return}const editor=activeRichEditor||$('#definitionInput'),node=makeFormulaNode(formulaClipboard.latex,formulaClipboard.source,formulaClipboard.size);editor.focus();const range=richSelection;if(range&&editor.contains(range.commonAncestorContainer)){range.deleteContents();range.insertNode(node);const spacer=document.createTextNode(' ');node.after(spacer);const nextRange=document.createRange(),selection=window.getSelection();nextRange.setStartAfter(spacer);nextRange.collapse(true);selection.removeAllRanges();selection.addRange(nextRange);richSelection=nextRange.cloneRange()}else editor.append(node,document.createTextNode(' '));selectFormula(node)}
+    const palette=[['#111111','Negro'],['#e53935','Rojo'],['#f57c00','Naranja'],['#d7a800','Amarillo'],['#168153','Verde'],['#1476c9','Azul'],['#5146c7','Índigo'],['#8b3fc1','Violeta'],['#d33d91','Rosa'],['#8a5a3b','Marrón'],['#1f5f42','Verde oscuro'],['#1d3f6d','Azul oscuro'],['#8b1e2d','Rojo oscuro'],['#6b7280','Gris']];
+    function saveFavoriteSymbols(){favoriteSymbols=[...new Set(favoriteSymbols.filter(symbol=>symbol.trim()))].slice(0,24);localStorage.setItem(favoritesKey,JSON.stringify(favoriteSymbols));if(firebaseReady)queueCloudWrite()}
+    function renderFavoriteSymbols(){document.querySelectorAll('.toolbar-symbols').forEach(group=>{group.querySelectorAll('[data-favorite-symbol]').forEach(button=>button.remove());const add=group.querySelector('.symbol-add');favoriteSymbols.forEach(symbol=>{const button=document.createElement('button');button.type='button';button.dataset.favoriteSymbol=symbol;button.title='Mantener pulsado para quitar';button.textContent=symbol;button.onmousedown=event=>{event.preventDefault();useRichCommand('insertText',symbol)};button.oncontextmenu=event=>{event.preventDefault();if(confirm(`¿Quitar ${symbol} de esta barra?`)){favoriteSymbols=favoriteSymbols.filter(item=>item!==symbol);saveFavoriteSymbols();renderFavoriteSymbols()}};group.insertBefore(button,add)})})}
+    function mountToolbarExtras(){document.querySelectorAll('.editor-toolbar').forEach(toolbar=>{toolbar.querySelectorAll('[data-symbol]').forEach(button=>button.remove());const dividers=toolbar.querySelectorAll('.toolbar-divider');if(dividers[1])dividers[1].remove();const paletteBox=toolbar.querySelector('.color-palette');paletteBox.innerHTML=palette.map(([color,name])=>`<button type="button" class="color-swatch" data-color="${color}" style="background:${color}" title="${name}" aria-label="${name}"></button>`).join('');const group=document.createElement('span');group.className='toolbar-symbols';group.innerHTML='<button type="button" class="symbol-add" title="Agregar símbolo">＋</button><button type="button" data-cut-formula title="Cortar fórmula seleccionada">✂ƒ</button><button type="button" data-paste-formula title="Pegar fórmula">↪ƒ</button>';const formula=toolbar.querySelector('[data-formula]');formula.after(group);group.querySelector('.symbol-add').onclick=()=>{const values=prompt('Agregá símbolos separados por espacios.');if(!values)return;favoriteSymbols.push(...values.trim().split(/\s+/));saveFavoriteSymbols();renderFavoriteSymbols()}});renderFavoriteSymbols()}
+    function makeStudyTable(rows,columns){const table=document.createElement('table');table.className='study-table';const body=document.createElement('tbody');for(let row=0;row<rows;row++){const tr=document.createElement('tr');for(let column=0;column<columns;column++){const cell=document.createElement('td');cell.innerHTML='<br>';tr.append(cell)}body.append(tr)}table.append(body);return table}
+    function updateTableTools(){document.querySelectorAll('.table-tools').forEach(tools=>{tools.hidden=!selectedTableCell?.isConnected;const fill=tools.querySelector('[data-table-fill]');if(fill&&selectedTableCell){const color=selectedTableCell.style.backgroundColor;if(/^#[0-9a-f]{6}$/i.test(color))fill.value=color}})}
+    function tableCellRectangle(start,end){
+      const table=start?.closest('.study-table');if(!table||table!==end?.closest('.study-table'))return [];
+      const grid=buildTableGrid(table),startPosition=tableCellPosition(grid,start),endPosition=tableCellPosition(grid,end);if(!startPosition||!endPosition)return [];
+      const firstRow=Math.min(startPosition.row,endPosition.row),lastRow=Math.max(startPosition.row+start.rowSpan-1,endPosition.row+end.rowSpan-1),firstColumn=Math.min(startPosition.column,endPosition.column),lastColumn=Math.max(startPosition.column+start.colSpan-1,endPosition.column+end.colSpan-1),cells=[];
+      for(let row=firstRow;row<=lastRow;row++)for(let column=firstColumn;column<=lastColumn;column++){const cell=grid[row]?.[column];if(!cell)return [];if(!cells.includes(cell))cells.push(cell)}
+      return cells;
+    }
+    function selectTableCell(cell,extend=false){
+      document.querySelectorAll('.study-table .table-cell-selected').forEach(item=>item.classList.remove('table-cell-selected'));
+      if(!cell){selectedTableCell=null;tableSelectionAnchor=null;selectedTableCells=[];selectFormula(null);updateTableTools();return}
+      selectedTableCell=cell;
+      if(extend&&tableSelectionAnchor?.isConnected){const cells=tableCellRectangle(tableSelectionAnchor,cell);selectedTableCells=cells.length?cells:[cell]}else{tableSelectionAnchor=cell;selectedTableCells=[cell]}
+      selectedTableCells.forEach(item=>item.classList.add('table-cell-selected'));selectFormula(null);updateTableTools();
+    }
+    function tableHasMergedCells(table){return [...table.querySelectorAll('td,th')].some(cell=>cell.colSpan>1||cell.rowSpan>1)}
+    function buildTableGrid(table){
+      const grid=[];
+      [...table.rows].forEach((row,rowIndex)=>{grid[rowIndex]||=[];let column=0;[...row.cells].forEach(cell=>{while(grid[rowIndex][column])column++;for(let r=rowIndex;r<rowIndex+cell.rowSpan;r++){grid[r]||=[];for(let c=column;c<column+cell.colSpan;c++)grid[r][c]=cell}column+=cell.colSpan})});
+      return grid;
+    }
+    function tableCellPosition(grid,cell){for(let row=0;row<grid.length;row++)for(let column=0;column<grid[row].length;column++)if(grid[row][column]===cell&&(row===0||grid[row-1]?.[column]!==cell)&&(column===0||grid[row][column-1]!==cell))return {row,column};return null}
+    function addTableRow(table,cell){
+      const grid=buildTableGrid(table),position=tableCellPosition(grid,cell);if(!position)return;
+      const insertAt=Math.min(table.rows.length,position.row+cell.rowSpan),newRow=document.createElement('tr'),width=Math.max(...grid.map(row=>row.length)),expanded=new Set();
+      for(let column=0;column<width;column++){
+        const above=grid[insertAt-1]?.[column],abovePosition=above&&tableCellPosition(grid,above);
+        if(above&&abovePosition&&abovePosition.row+above.rowSpan>insertAt){if(!expanded.has(above)){above.rowSpan+=1;expanded.add(above)};continue}
+        const newCell=document.createElement('td');newCell.innerHTML='<br>';newRow.append(newCell);
+      }
+      if(insertAt>=table.rows.length)table.append(newRow);else table.rows[insertAt].before(newRow);
+      selectTableCell(newRow.cells[0]||cell);
+    }
+    function addTableColumn(table,cell){
+      const grid=buildTableGrid(table),position=tableCellPosition(grid,cell);if(!position)return;
+      const insertAt=position.column+cell.colSpan,expanded=new Set();let selected=null;
+      [...table.rows].forEach((row,rowIndex)=>{
+        const left=grid[rowIndex]?.[insertAt-1],leftPosition=left&&tableCellPosition(grid,left);
+        if(left&&leftPosition&&leftPosition.column+left.colSpan>insertAt){if(!expanded.has(left)){left.colSpan+=1;expanded.add(left)};return}
+        const newCell=document.createElement('td');newCell.innerHTML='<br>';
+        const before=[...row.cells].find(current=>{const currentPosition=tableCellPosition(grid,current);return currentPosition&&currentPosition.column>=insertAt});
+        row.insertBefore(newCell,before||null);if(rowIndex===position.row)selected=newCell;
+      });
+      selectTableCell(selected||cell);
+    }
+    function mergeSelectedTableCells(){
+      const cells=selectedTableCells.filter(cell=>cell.isConnected),table=cells[0]?.closest('.study-table');
+      if(cells.length<2||!table||cells.some(cell=>cell.closest('.study-table')!==table))return;
+      const grid=buildTableGrid(table),positions=cells.map(cell=>tableCellPosition(grid,cell));if(positions.some(position=>!position))return;
+      const firstRow=Math.min(...positions.map(position=>position.row)),lastRow=Math.max(...positions.map((position,index)=>position.row+cells[index].rowSpan-1)),firstColumn=Math.min(...positions.map(position=>position.column)),lastColumn=Math.max(...positions.map((position,index)=>position.column+cells[index].colSpan-1));
+      const block=[];for(let row=firstRow;row<=lastRow;row++)for(let column=firstColumn;column<=lastColumn;column++){const current=grid[row]?.[column];if(!current)return;if(!block.includes(current))block.push(current)}
+      const anchor=grid[firstRow][firstColumn];if(!anchor)return;anchor.colSpan=lastColumn-firstColumn+1;anchor.rowSpan=lastRow-firstRow+1;
+      block.filter(cell=>cell!==anchor).forEach(cell=>cell.remove());selectTableCell(null);
+    }
+    function unmergeSelectedTableCell(){
+      const cell=selectedTableCell,table=cell?.closest('.study-table');if(!cell||!table||(cell.colSpan===1&&cell.rowSpan===1))return;
+      const grid=buildTableGrid(table),position=tableCellPosition(grid,cell);if(!position)return;
+      const rows=cell.rowSpan,columns=cell.colSpan;cell.rowSpan=1;cell.colSpan=1;
+      for(let rowIndex=position.row;rowIndex<position.row+rows;rowIndex++){
+        const row=table.rows[rowIndex];
+        for(let columnIndex=position.column;columnIndex<position.column+columns;columnIndex++){
+          if(rowIndex===position.row&&columnIndex===position.column)continue;
+          const newCell=document.createElement('td');newCell.innerHTML='<br>';
+          const before=[...row.cells].find(current=>{const currentPosition=tableCellPosition(grid,current);return currentPosition&&currentPosition.column>columnIndex});
+          row.insertBefore(newCell,before||null);
+        }
+      }
+      selectTableCell(null);
+    }
+    function tableResizeTarget(event){
+      const cell=event.target.closest?.('td,th');if(!cell?.closest('.study-table'))return null;
+      const rect=cell.getBoundingClientRect(),right=rect.right-event.clientX,bottom=rect.bottom-event.clientY,threshold=18;
+      if(right<0||bottom<0)return null;
+      if(right<=threshold&&right<=bottom)return {axis:'column',cell};
+      if(bottom<=threshold)return {axis:'row',cell};
+      return null;
+    }
+    function startTableResize(event,target){
+      const cell=target.cell,table=cell.closest('.study-table'),row=cell.closest('tr'),column=[...row.cells].indexOf(cell);
+      event.preventDefault();event.stopPropagation();
+      tableResizeState={axis:target.axis,table,row,column,cell,merged:tableHasMergedCells(table),startX:event.clientX,startY:event.clientY,startSize:target.axis==='column'?cell.getBoundingClientRect().width:row.getBoundingClientRect().height};
+      document.body.style.userSelect='none';window.addEventListener('pointermove',resizeTable);window.addEventListener('pointerup',finishTableResize,{once:true});window.addEventListener('pointercancel',finishTableResize,{once:true});
+    }
+    function resizeTable(event){
+      const state=tableResizeState;if(!state)return;
+      const size=Math.max(state.axis==='column'?48:30,Math.round(state.startSize+(state.axis==='column'?event.clientX-state.startX:event.clientY-state.startY)));
+      if(state.axis==='column'){
+        if(state.merged)state.cell.style.width=`${size}px`;
+        else [...state.table.rows].forEach(row=>{const cell=row.cells[state.column];if(cell)cell.style.width=`${size}px`});
+      }else{
+        if(state.merged)state.cell.style.height=`${size}px`;
+        else [...state.row.cells].forEach(cell=>cell.style.height=`${size}px`);
+      }
+    }
+    function finishTableResize(){window.removeEventListener('pointermove',resizeTable);tableResizeState=null;document.body.style.userSelect='';rememberRichSelection()}
+    function resetTableCellSize(){
+      const cell=selectedTableCell,table=cell?.closest('.study-table');if(!cell||!table)return;
+      const grid=buildTableGrid(table),position=tableCellPosition(grid,cell);if(!position)return;
+      if(cell.colSpan>1)cell.style.width='';else{const changed=new Set();grid.forEach(row=>{const current=row[position.column];if(current&&!changed.has(current)){current.style.width='';changed.add(current)}})}
+      if(cell.rowSpan>1)cell.style.height='';else [...cell.closest('tr').cells].forEach(current=>current.style.height='');
+    }
+    function openTableDialog(){const dialog=$('#tableDialog'),host=$('#conceptDialog');if(dialog.parentElement!==host)host.append(dialog);renderTableGrid();dialog.classList.add('table-layer');dialog.setAttribute('open','')}
+    function closeTableDialog(){const dialog=$('#tableDialog');dialog.removeAttribute('open');dialog.classList.remove('table-layer')}
+    function insertTable(){const rows=Math.max(1,Math.min(12,Number($('#tableRows').value)||3)),columns=Math.max(1,Math.min(12,Number($('#tableColumns').value)||3)),editor=activeRichEditor||$('#definitionInput'),table=makeStudyTable(rows,columns);editor.focus();const range=richSelection;if(range&&editor.contains(range.commonAncestorContainer)){range.deleteContents();range.insertNode(table);const after=document.createElement('p');after.innerHTML='<br>';table.after(after);const nextRange=document.createRange(),selection=window.getSelection();nextRange.setStart(after,0);nextRange.collapse(true);selection.removeAllRanges();selection.addRange(nextRange);richSelection=nextRange.cloneRange()}else editor.append(table,document.createElement('p'));closeTableDialog();selectTableCell(null)}
+    function tableAction(action){const cell=selectedTableCell;if(!cell?.isConnected)return;const row=cell.closest('tr'),table=cell.closest('table');if(!row||!table)return;if(action==='merge'){mergeSelectedTableCells();return}if(action==='unmerge'){unmergeSelectedTableCell();return}if(action==='reset-size'){resetTableCellSize();return}if(action==='add-row'){addTableRow(table,cell);return}if(action==='add-column'){addTableColumn(table,cell);return}if(['remove-row','remove-column'].includes(action)&&tableHasMergedCells(table))return;const column=[...row.cells].indexOf(cell);if(action==='remove-row'&&table.rows.length>1){const next=row.nextElementSibling||row.previousElementSibling;row.remove();selectTableCell(next.cells[Math.min(column,next.cells.length-1)])}if(action==='remove-column'&&row.cells.length>1){[...table.rows].forEach(currentRow=>currentRow.cells[column].remove());selectTableCell(table.rows[Math.min(row.rowIndex,table.rows.length-1)].cells[Math.min(column,table.rows[0].cells.length-1)])}if(action==='align-left')cell.style.textAlign='left';if(action==='align-center')cell.style.textAlign='center';if(action==='align-right')cell.style.textAlign='right';if(action==='align-top')cell.style.verticalAlign='top';if(action==='align-middle')cell.style.verticalAlign='middle';if(action==='align-bottom')cell.style.verticalAlign='bottom';if(action==='borders')table.classList.toggle('no-borders');if(action==='clear-fill')cell.style.backgroundColor=''}
+    function renderTableGrid(){const grid=$('#tableSizeGrid'),rows=Math.max(1,Math.min(12,Number($('#tableRows').value)||3)),columns=Math.max(1,Math.min(12,Number($('#tableColumns').value)||3));grid.innerHTML=Array.from({length:36},(_,index)=>{const row=Math.floor(index/6)+1,column=index%6+1;return `<button type="button" class="${row<=rows&&column<=columns?'selected':''}" data-table-size="${row},${column}" title="${row} × ${column}"></button>`}).join('');grid.querySelectorAll('[data-table-size]').forEach(button=>button.onclick=()=>{const [row,column]=button.dataset.tableSize.split(',');$('#tableRows').value=row;$('#tableColumns').value=column;renderTableGrid()})}
+    function mountTableTools(){document.querySelectorAll('.editor-toolbar').forEach(toolbar=>{const group=toolbar.querySelector('.toolbar-symbols');if(!group)return;if(!group.querySelector('[data-insert-table]')){const insertButton=document.createElement('button');insertButton.type='button';insertButton.dataset.insertTable='';insertButton.textContent='▦';insertButton.title='Insertar tabla';insertButton.addEventListener('pointerdown',event=>{event.preventDefault();rememberRichSelection();openTableDialog()});group.prepend(insertButton)}let tools=toolbar.querySelector('.table-tools');if(!tools){tools=document.createElement('span');tools.className='table-tools';tools.hidden=true;tools.innerHTML='<button type="button" data-table-action="add-row" title="Agregar fila">＋F</button><button type="button" data-table-action="remove-row" title="Quitar fila">−F</button><button type="button" data-table-action="add-column" title="Agregar columna">＋C</button><button type="button" data-table-action="remove-column" title="Quitar columna">−C</button><button type="button" data-table-action="merge" title="Combinar: seleccioná con Shift + clic">⧉</button><button type="button" data-table-action="unmerge" title="Separar celda combinada">⊟</button><button type="button" data-table-action="reset-size" title="Restablecer ancho y alto">↺</button><input class="table-fill" type="color" value="#ffffff" data-table-fill title="Color de fondo"><button type="button" data-table-action="clear-fill" title="Quitar color de fondo">⊘</button><button type="button" data-table-action="borders" title="Mostrar u ocultar bordes">▦</button><button type="button" class="table-align" data-table-action="align-left" title="Alinear a la izquierda"><span class="align-lines align-left"><i></i><i></i><i></i><i></i></span></button><button type="button" class="table-align" data-table-action="align-center" title="Centrar"><span class="align-lines align-center"><i></i><i></i><i></i><i></i></span></button><button type="button" class="table-align" data-table-action="align-right" title="Alinear a la derecha"><span class="align-lines align-right"><i></i><i></i><i></i><i></i></span></button><button type="button" data-table-action="align-top" title="Alinear arriba">↥</button><button type="button" data-table-action="align-middle" title="Centrar verticalmente">↕</button><button type="button" data-table-action="align-bottom" title="Alinear abajo">↧</button>';group.after(tools);tools.querySelectorAll('[data-table-action]').forEach(button=>button.onclick=()=>tableAction(button.dataset.tableAction));tools.querySelector('[data-table-fill]').oninput=event=>{if(selectedTableCell?.isConnected)selectedTableCell.style.backgroundColor=event.target.value}}});$('#closeTableDialog').onclick=closeTableDialog;$('#cancelTableButton').onclick=closeTableDialog;$('#insertTableButton').onclick=insertTable;$('#tableRows').oninput=renderTableGrid;$('#tableColumns').oninput=renderTableGrid}
     function makeFormulaNode(latex){const node=document.createElement('math-span');node.className='formula-inline';node.dataset.latex=latex;node.setAttribute('contenteditable','false');node.setAttribute('title','Doble clic para editar la fórmula');node.textContent=latex;return node}
     function clearFormulaState(){formulaInsertRange=null;formulaTargetEditor=null;editingFormulaNode=null;window.mathVirtualKeyboard?.hide()}
     function formulaKey(label,insert=null,extra={}){return{label,insert,...extra}}
@@ -203,7 +357,11 @@
     function insertFormulaShortcut(latex){const field=$('#formulaField');field.focus();field.insert(latex,{focus:true})}
     function insertFormula(){const latex=safeLatex($('#formulaField').value);if(!latex.trim())return;const editor=formulaTargetEditor||activeRichEditor||$('#definitionInput'),node=makeFormulaNode(latex);if(editingFormulaNode?.isConnected){editingFormulaNode.replaceWith(node);activeRichEditor=editor;closeFormulaDialog();return}editor.focus();if(formulaInsertRange&&editor.contains(formulaInsertRange.commonAncestorContainer)){formulaInsertRange.deleteContents();formulaInsertRange.insertNode(node);const spacer=document.createTextNode(' ');node.after(spacer);const range=document.createRange(),selection=window.getSelection();range.setStartAfter(spacer);range.collapse(true);selection.removeAllRanges();selection.addRange(range);richSelection=range.cloneRange()}else editor.append(node,document.createTextNode(' '));activeRichEditor=editor;closeFormulaDialog()}
     function setupRichEditors(){document.addEventListener('selectionchange',rememberRichSelection);document.querySelectorAll('.rich-editor').forEach(editor=>{editor.addEventListener('focus',()=>activeRichEditor=editor);editor.addEventListener('dblclick',event=>{const node=event.target.closest?.('math-span.formula-inline');if(!node)return;event.preventDefault();event.stopPropagation();activeRichEditor=editor;openFormulaEditor(node)})});document.querySelectorAll('[data-command]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();useRichCommand(button.dataset.command)}));document.querySelectorAll('[data-symbol]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();useRichCommand('insertText',button.dataset.symbol)}));document.querySelectorAll('[data-color]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();useRichCommand('foreColor',button.dataset.color)}));document.querySelectorAll('[data-formula]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();openFormulaEditor()}));document.querySelectorAll('[data-formula-shortcut]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();insertFormulaShortcut(button.dataset.formulaShortcut)}));$('#formulaPad').addEventListener('pointerdown',event=>{const button=event.target.closest('[data-formula-pad-key]');if(!button)return;event.preventDefault();pressFormulaPad(Number(button.dataset.formulaPadKey))});$('#closeFormulaDialog').onclick=closeFormulaDialog;$('#cancelFormulaButton').onclick=closeFormulaDialog;$('#insertFormulaButton').onclick=insertFormula;$('#formulaDialog').addEventListener('cancel',event=>{event.preventDefault();closeFormulaDialog()})}
-    function openEditor(id=null){editingId=id;const c=id&&concepts.find(x=>x.id===id);$('#dialogTitle').textContent=c?'Editar concepto':'Nuevo concepto';$('#termInput').value=c?.term||'';$('#definitionInput').innerHTML=richHtml(c?.definition||'');$('#notesInput').innerHTML=richHtml(c?.notes||'');$('#tagsInput').value=c?.tags.join(', ')||'';$('#imageInput').value='';renderImagePreviews(c?.images||[]);$('#deleteButton').hidden=!c;$('#conceptDialog').showModal();$('#termInput').focus()}
+    function tagInputValues(){return [...new Set($('#tagsInput').value.split(',').map(t=>t.trim().replace(/^#/, '')).filter(Boolean))]}
+    function renderSubjectChoices(){const subjects=allSubjects();$('#subjectsList').innerHTML=subjects.map(s=>`<option value="${esc(s)}"></option>`).join('')}
+    function renderTagSuggestions(){const current=new Set(tagInputValues()),subject=$('#subjectInput').value.trim(),tags=allTags().filter(t=>t!==subject);$('#tagSuggestions').innerHTML=tags.length?tags.map(tag=>`<button type="button" class="${current.has(tag)?'selected':''}" data-suggested-tag="${esc(tag)}">${current.has(tag)?'✓ ':''}#${esc(tag)}</button>`).join(''):'<span class="hint">Los hashtags que vayas creando aparecerán acá.</span>';$('#tagSuggestions').querySelectorAll('[data-suggested-tag]').forEach(button=>button.onclick=()=>{const tag=button.dataset.suggestedTag,values=tagInputValues(),index=values.indexOf(tag);if(index>=0)values.splice(index,1);else values.push(tag);$('#tagsInput').value=values.join(', ');renderTagSuggestions()})}
+    function renderLinkTargets(){const options=conceptTerms().map(c=>`<option value="${esc(c.id)}">${esc(c.term)}</option>`).join('');document.querySelectorAll('[data-link-target]').forEach(select=>{const selected=select.value;select.innerHTML=`<option value="">Vincular a…</option>${options}`;select.value=selected})}
+    function openEditor(id=null){selectTableCell(null);editingId=id;const c=id&&concepts.find(x=>x.id===id);$('#dialogTitle').textContent=c?'Editar concepto':'Nuevo concepto';$('#termInput').value=c?.term||'';$('#definitionInput').innerHTML=richHtml(c?.definition||'');$('#notesInput').innerHTML=richHtml(c?.notes||'');$('#subjectInput').value=subjectOf(c||{});$('#tagsInput').value=(c?.tags||[]).filter(t=>t!==subjectOf(c||{})).join(', ');$('#imageInput').value='';renderSubjectChoices();renderTagSuggestions();renderLinkTargets();renderImagePreviews(c?.images||[]);$('#deleteButton').hidden=!c;$('#conceptDialog').showModal();$('#termInput').focus()}
     function shuffle(items){return [...items].sort(()=>Math.random()-.5)}
     function renderFlashTags(){const chosen=$('#flashAll').checked;$('#flashTags').innerHTML=allTags().map(t=>`<label><input type="checkbox" value="${esc(t)}" ${chosen?'disabled':''}> #${esc(t)}</label>`).join('')}
     function setOverlay(id,open){const overlay=$('#'+id);overlay.hidden=!open;overlay.style.display=open?'grid':'none'}
@@ -216,16 +374,19 @@
     function setTheme(dark){document.body.classList.toggle('dark',dark);$('#themeButton').setAttribute('aria-pressed',dark);$('#themeButton').textContent=dark?'☀ Modo claro':'◐ Modo oscuro';localStorage.setItem(themeKey,dark?'dark':'light')}
     $('#newButton').onclick=()=>openEditor();$('#flashcardsButton').onclick=openFlashcards;$('#themeButton').onclick=()=>setTheme(!document.body.classList.contains('dark'));$('#closeDialog').onclick=()=>$('#conceptDialog').close();$('#cancelButton').onclick=()=>$('#conceptDialog').close();
     document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{if(b.dataset.close==='mobileDetailOverlay'){closeMobileDetail();return}const el=$('#'+b.dataset.close);if(el.tagName==='DIALOG')el.close();else setOverlay(b.dataset.close,false)});$('#closeStudyButton').onclick=closeStudy;$('#flashcardSetup').onclick=e=>{if(e.target===$('#flashcardSetup'))setOverlay('flashcardSetup',false)};$('#studyOverlay').onclick=e=>{if(e.target===$('#studyOverlay'))closeStudy()};$('#studyImageOverlay').onclick=e=>{if(e.target===$('#studyImageOverlay'))$('#studyImageOverlay').hidden=true};$('#mobileDetailOverlay').onclick=e=>{if(e.target===$('#mobileDetailOverlay'))closeMobileDetail()};$('#flashAll').onchange=renderFlashTags;$('#flashcardForm').onsubmit=e=>{e.preventDefault();startFlashcards()};$('#flashcard').onclick=()=>{if(!flashDeck.length)return;flashFlipped=!flashFlipped;renderFlashcard()};$('#flashcard').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#flashcard').click()}};$('#flipButton').onclick=()=>{if(!flashDeck.length)return;flashFlipped=!flashFlipped;renderFlashcard()};$('#nextButton').onclick=nextFlashcard;$('#shuffleButton').onclick=()=>{if(!flashDeck.length){renderFlashcard();return}flashDeck=shuffle(flashDeck);flashIndex=0;flashFlipped=false;renderFlashcard()};setOverlay('flashcardSetup',false);setOverlay('studyOverlay',false);setOverlay('mobileDetailOverlay',false);$('#studyImageOverlay').hidden=true;window.addEventListener('resize',()=>{if(!isCompact())closeMobileDetail()});window.addEventListener('scroll',()=>{if(!isCompact())return;cancelAnimationFrame(mobileFocusFrame);mobileFocusFrame=requestAnimationFrame(updateMobileFocus)},{passive:true});
+    window.addEventListener('blur',preserveEditorCursor);
+    window.addEventListener('focus',restoreEditorCursor);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)preserveEditorCursor();else restoreEditorCursor()});
     $('#deleteButton').onclick=()=>{if(confirm('¿Eliminar este concepto?')){concepts=concepts.filter(c=>c.id!==editingId);selectedId=concepts[0]?.id;save();$('#conceptDialog').close();render()}};
     function renderImagePreviews(images){$('#imagePreviews').innerHTML=images.map(src=>`<img src="${src}" alt="Vista previa de imagen seleccionada">`).join('')}
     function compactImage(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=reject;reader.onload=()=>{const img=new Image();img.onerror=reject;img.onload=()=>{const max=1280,scale=Math.min(1,max/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/webp',.78))};img.src=reader.result};reader.readAsDataURL(file)})}
     $('#imageInput').onchange=async()=>{const files=[...$('#imageInput').files].filter(f=>f.type.startsWith('image/')).slice(0,6);if(!files.length)return;try{renderImagePreviews(await Promise.all(files.map(compactImage)))}catch{alert('No se pudo leer una de las imágenes. Probá con otro archivo.')}};
-    $('#conceptForm').onsubmit=async e=>{e.preventDefault();const term=$('#termInput').value.trim(),definition=sanitizeRichHtml($('#definitionInput').innerHTML),notes=sanitizeRichHtml($('#notesInput').innerHTML);const tags=[...new Set($('#tagsInput').value.split(',').map(t=>t.trim().replace(/^#/,'')).filter(Boolean))];if(!term||!plainRich(definition).trim())return;const old=editingId&&concepts.find(c=>c.id===editingId);let images=old?.images||[];const files=[...$('#imageInput').files].filter(f=>f.type.startsWith('image/')).slice(0,6);if(files.length)images=await Promise.all(files.map(compactImage));const obj={id:editingId||crypto.randomUUID(),term,definition,notes,tags,images};if(editingId)concepts=concepts.map(c=>c.id===editingId?obj:c);else concepts.push(obj);selectedId=obj.id;try{save()}catch{alert('Las imágenes ocupan demasiado para esta maqueta local. Usá archivos más chicos; con Firebase van en Storage, no dentro del glosario.');return}$('#conceptDialog').close();render()};
+    $('#conceptForm').onsubmit=async e=>{e.preventDefault();const term=$('#termInput').value.trim(),subject=$('#subjectInput').value.trim(),definition=autoLinkConcepts($('#definitionInput').innerHTML),notes=autoLinkConcepts($('#notesInput').innerHTML);const tags=[...new Set([...(subject?[subject]:[]),...tagInputValues()])];if(!term||!plainRich(definition).trim())return;const old=editingId&&concepts.find(c=>c.id===editingId);let images=old?.images||[];const files=[...$('#imageInput').files].filter(f=>f.type.startsWith('image/')).slice(0,6);if(files.length)images=await Promise.all(files.map(compactImage));const obj={id:editingId||crypto.randomUUID(),term,definition,notes,tags,subject,images};if(editingId)concepts=concepts.map(c=>c.id===editingId?obj:c);else concepts.push(obj);selectedId=obj.id;try{save()}catch{alert('Las imágenes ocupan demasiado para esta maqueta local. Usá archivos más chicos; con Firebase van en Storage, no dentro del glosario.');return}$('#conceptDialog').close();render()};
     /*
       Se conserva MathLive para mostrar la fórmula, pero no para capturar
       escritura en el teléfono: el textarea abre el teclado normal del sistema.
     */
-    function formulaElement(doc,latex,source){
+    function formulaElement(doc,latex,source,size='3'){
       const node=doc.createElement('math-field');
       node.className='formula-inline';
       node.setAttribute('read-only','');
@@ -233,12 +394,13 @@
       node.setAttribute('title','Doble clic para editar la fórmula');
       node.dataset.latex=safeLatex(latex);
       node.dataset.formulaSource=safeLatex(source||latex);
+      node.dataset.formulaSize=['2','3','4','5'].includes(String(size))?String(size):'3';
       node.textContent=node.dataset.latex;
       return node;
     }
     function sanitizeRichHtml(value){
       const doc=new DOMParser().parseFromString(String(value||''),'text/html');
-      const allowed=new Set(['B','STRONG','I','EM','U','BR','DIV','P','SPAN','FONT','MATH-FIELD']);
+      const allowed=new Set(['B','STRONG','I','EM','U','BR','DIV','P','SPAN','FONT','A','MATH-FIELD','TABLE','THEAD','TBODY','TR','TD','TH']);
       function clean(node){
         [...node.childNodes].forEach(clean);
         if(node.nodeType!==1)return;
@@ -252,21 +414,78 @@
         }
         if(!allowed.has(tag)){node.replaceWith(...node.childNodes);return}
         const isFormula=tag==='MATH-FIELD'&&node.classList.contains('formula-inline');
+        const isConceptLink=tag==='A'&&node.classList.contains('concept-link')&&/^concept:[\w-]+$/.test(node.getAttribute('href')||'');
+        const suppressLink=tag==='SPAN'&&node.classList.contains('link-suppressed');
+        const isTable=tag==='TABLE';
+        const tableWithoutBorders=isTable&&node.classList.contains('no-borders');
+        const isTableCell=tag==='TD'||tag==='TH';
         const latex=isFormula?safeLatex(node.getAttribute('data-latex')||node.textContent):'';
         const source=isFormula?safeLatex(node.getAttribute('data-formula-source')||latex):'';
+        const formulaSize=isFormula?node.getAttribute('data-formula-size')||'3':'3';
         const color=tag==='FONT'?node.getAttribute('color'):node.style.color;
+        // execCommand('fontSize') creates <font size="…"> in Chrome. Keep it
+        // when saving, otherwise the size only appears to work in the editor.
+        const fontSize=tag==='FONT'?node.getAttribute('size'):'';
+        const styledFontSize=tag==='FONT'?'':node.style.fontSize;
         if(isFormula){
-          if(latex)node.replaceWith(formulaElement(doc,latex,source));else node.remove();
+          if(latex)node.replaceWith(formulaElement(doc,latex,source,formulaSize));else node.remove();
+          return;
+        }
+        if(isConceptLink){
+          const href=node.getAttribute('href');
+          [...node.attributes].forEach(a=>node.removeAttribute(a.name));
+          node.setAttribute('href',href);node.setAttribute('class','concept-link');node.dataset.conceptId=href.slice(8);
+          return;
+        }
+        if(suppressLink){
+          [...node.attributes].forEach(a=>node.removeAttribute(a.name));
+          node.setAttribute('class','link-suppressed');
+          return;
+        }
+        if(isTable||isTableCell){
+          const textAlign=node.style.textAlign,verticalAlign=node.style.verticalAlign,backgroundColor=node.style.backgroundColor,fontSize=node.style.fontSize,width=node.style.width,height=node.style.height,colSpan=isTableCell?Number(node.getAttribute('colspan')):1,rowSpan=isTableCell?Number(node.getAttribute('rowspan')):1;
+          [...node.attributes].forEach(a=>node.removeAttribute(a.name));
+          if(isTable)node.setAttribute('class',`study-table${tableWithoutBorders?' no-borders':''}`);
+          if(isTableCell){if(textAlign)node.style.textAlign=textAlign;if(verticalAlign)node.style.verticalAlign=verticalAlign;if(backgroundColor)node.style.backgroundColor=backgroundColor;if(fontSize)node.style.fontSize=fontSize;if(width)node.style.width=width;if(height)node.style.height=height;if(Number.isInteger(colSpan)&&colSpan>1)node.setAttribute('colspan',String(colSpan));if(Number.isInteger(rowSpan)&&rowSpan>1)node.setAttribute('rowspan',String(rowSpan))}
           return;
         }
         [...node.attributes].forEach(a=>node.removeAttribute(a.name));
         if(color){if(tag==='FONT')node.setAttribute('color',color);else node.style.color=color}
+        if(tag==='FONT'&&/^[1-7]$/.test(fontSize))node.setAttribute('size',fontSize);
+        if(tag!=='FONT'&&/^\d+(?:\.\d+)?(?:px|em|rem|%)$/.test(styledFontSize||''))node.style.fontSize=styledFontSize;
       }
       [...doc.body.childNodes].forEach(clean);
       return doc.body.innerHTML;
     }
     function richHtml(value){const raw=String(value??'');return /<\/?[a-z][\s\S]*>/i.test(raw)?sanitizeRichHtml(raw):esc(raw).replace(/\n/g,'<br>')}
     function plainRich(value){const raw=String(value??'');if(!/<\/?[a-z][\s\S]*>/i.test(raw))return raw;const doc=new DOMParser().parseFromString(sanitizeRichHtml(raw),'text/html');return doc.body.textContent||''}
+    function conceptTerms(){return [...concepts].filter(c=>c.term?.trim()).sort((a,b)=>b.term.length-a.term.length)}
+    function autoLinkConcepts(value){
+      const doc=new DOMParser().parseFromString(sanitizeRichHtml(value),'text/html'),terms=conceptTerms();
+      if(!terms.length)return doc.body.innerHTML;
+      const escaped=terms.map(c=>c.term.trim().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+      if(!escaped)return doc.body.innerHTML;
+      const regex=new RegExp(`(^|[^\\p{L}\\p{N}])(${escaped})(?=$|[^\\p{L}\\p{N}])`,'giu');
+      const idByTerm=new Map(terms.map(c=>[c.term.trim().toLocaleLowerCase('es'),c.id]));
+      const walker=doc.createTreeWalker(doc.body,NodeFilter.SHOW_TEXT,{acceptNode(node){
+        const parent=node.parentElement;
+        regex.lastIndex=0;
+        return parent&& !parent.closest('a,math-field,.link-suppressed,script,style')&&regex.test(node.data)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
+      }});
+      const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+      nodes.forEach(node=>{
+        regex.lastIndex=0;const fragment=doc.createDocumentFragment();let last=0;
+        node.data.replace(regex,(match,prefix,term,offset)=>{
+          const start=offset+prefix.length;if(start>last)fragment.append(doc.createTextNode(node.data.slice(last,start)));
+          const link=doc.createElement('a');link.className='concept-link';link.href=`concept:${idByTerm.get(term.toLocaleLowerCase('es'))}`;link.dataset.conceptId=idByTerm.get(term.toLocaleLowerCase('es'));link.textContent=term;fragment.append(link);last=start+term.length;return match;
+        });
+        if(last<node.data.length)fragment.append(doc.createTextNode(node.data.slice(last)));node.replaceWith(fragment);
+      });
+      return sanitizeRichHtml(doc.body.innerHTML);
+    }
+    const subjectOf=c=>(c.subject||'').trim();
+    const displayTags=c=>{const subject=subjectOf(c);return [...new Set([...(subject?[subject]:[]),...(c.tags||[]).filter(t=>t!==subject)])]};
+    const allSubjects=()=>[...new Set(concepts.map(subjectOf).filter(Boolean))].sort((a,b)=>collator.compare(a,b));
     function findTopLevelSlash(text){
       let round=0,curly=0;
       for(let i=0;i<text.length;i++){
@@ -354,8 +573,8 @@
       preview.readOnly=true;
       preview.mathVirtualKeyboardPolicy='manual';
     }
-    function makeFormulaNode(latex,source){
-      const node=formulaElement(document,latex,source);
+    function makeFormulaNode(latex,source,size='3'){
+      const node=formulaElement(document,latex,source,size);
       node.value=latex;
       node.mathVirtualKeyboardPolicy='manual';
       return node;
@@ -388,7 +607,7 @@
       const source=$('#formulaSource').value.trim();
       const latex=safeLatex(formulaSourceToLatex(source));
       if(!latex)return;
-      const editor=formulaTargetEditor||activeRichEditor||$('#definitionInput'),node=makeFormulaNode(latex,source);
+      const editor=formulaTargetEditor||activeRichEditor||$('#definitionInput'),node=makeFormulaNode(latex,source,editingFormulaNode?.dataset.formulaSize||'3');
       if(editingFormulaNode?.isConnected){editingFormulaNode.replaceWith(node);activeRichEditor=editor;closeFormulaDialog();return}
       editor.focus();
       if(formulaInsertRange&&editor.contains(formulaInsertRange.commonAncestorContainer)){
@@ -400,18 +619,49 @@
       activeRichEditor=editor;closeFormulaDialog();
     }
     function setupRichEditors(){
+      mountToolbarExtras();
+      mountTableTools();
       document.addEventListener('selectionchange',rememberRichSelection);
       document.querySelectorAll('.rich-editor').forEach(editor=>{
         editor.addEventListener('focus',()=>activeRichEditor=editor);
+        editor.addEventListener('blur',()=>{setTimeout(()=>{if(!document.hasFocus()||document.hidden||document.activeElement?.closest?.('.editor-toolbar'))return;editor.innerHTML=autoLinkConcepts(editor.innerHTML)},0)});
+        let longPressTimer=null;
+        editor.addEventListener('pointerdown',event=>{
+          const resizeTarget=tableResizeTarget(event);
+          if(resizeTarget){activeRichEditor=editor;startTableResize(event,resizeTarget);return}
+          const node=event.target.closest?.('math-field.formula-inline');
+          if(!node)return;
+          activeRichEditor=editor;selectFormula(node);
+          if(event.pointerType==='touch')longPressTimer=setTimeout(()=>{longPressTimer=null;openFormulaEditor(node)},520);
+        });
+        editor.addEventListener('pointermove',event=>{if(tableResizeState)return;const target=tableResizeTarget(event);editor.style.cursor=target?(target.axis==='column'?'col-resize':'row-resize'):''});
+        editor.addEventListener('pointerleave',()=>{if(!tableResizeState)editor.style.cursor=''});
+        editor.addEventListener('pointerup',()=>{if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null}});
+        editor.addEventListener('pointercancel',()=>{if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null}});
+        editor.addEventListener('click',event=>{const link=event.target.closest?.('a.concept-link');if(link){event.preventDefault();openLinkedConcept(link.dataset.conceptId);return}const cell=event.target.closest?.('td,th');if(cell?.closest('.study-table'))selectTableCell(cell,event.shiftKey)});
+        editor.addEventListener('focusin',event=>{const cell=event.target.closest?.('td,th');if(cell?.closest('.study-table'))selectTableCell(cell)});
         editor.addEventListener('dblclick',event=>{
           const node=event.target.closest?.('math-field.formula-inline');
           if(!node)return;
-          event.preventDefault();event.stopPropagation();activeRichEditor=editor;openFormulaEditor(node);
+          event.preventDefault();event.stopPropagation();activeRichEditor=editor;selectFormula(node);openFormulaEditor(node);
         });
       });
       document.querySelectorAll('[data-command]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();useRichCommand(button.dataset.command)}));
       document.querySelectorAll('[data-symbol]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();useRichCommand('insertText',button.dataset.symbol)}));
       document.querySelectorAll('[data-color]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();useRichCommand('foreColor',button.dataset.color)}));
+      document.querySelectorAll('[data-copy-format]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();copyFormat()}));
+      document.querySelectorAll('[data-apply-format]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();applyCopiedFormat()}));
+      document.querySelectorAll('[data-font-size]').forEach(select=>{
+        // Apply the option already shown before opening the native menu.
+        // Re-applying on click would make Chrome close that menu immediately.
+        select.addEventListener('pointerdown',()=>{rememberRichSelection();applyFontSize(select.value)});
+        select.addEventListener('mousedown',rememberRichSelection);
+        select.addEventListener('change',()=>applyFontSize(select.value));
+      });
+      document.querySelectorAll('[data-create-link]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();createManualLink(button.closest('.link-picker').querySelector('[data-link-target]'))}));
+      document.querySelectorAll('[data-remove-link]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();removeManualLink()}));
+      document.querySelectorAll('[data-cut-formula]').forEach(button=>button.addEventListener('click',cutFormula));
+      document.querySelectorAll('[data-paste-formula]').forEach(button=>button.addEventListener('click',pasteFormula));
       document.querySelectorAll('[data-formula]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();openFormulaEditor()}));
       document.querySelectorAll('[data-formula-source]').forEach(button=>button.addEventListener('mousedown',event=>{event.preventDefault();insertFormulaShortcut(button.dataset.formulaSource,button.dataset.caretBack)}));
       $('#formulaSource').addEventListener('input',updateFormulaPreview);
@@ -420,6 +670,8 @@
       $('#cancelFormulaButton').onclick=closeFormulaDialog;
       $('#insertFormulaButton').onclick=insertFormula;
       $('#formulaDialog').addEventListener('cancel',event=>{event.preventDefault();closeFormulaDialog()});
+      $('#tagsInput').addEventListener('input',renderTagSuggestions);
+      $('#subjectInput').addEventListener('input',renderTagSuggestions);
     }
     $('#search').oninput=()=>{ignoreTermObserver=true;renderList()};
     $('#clearFilters').onclick=()=>{activeTags.clear();render()};
@@ -431,7 +683,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=9', { updateViaCache: 'none' });
+        navigator.serviceWorker.register('./sw.js?v=28', { updateViaCache: 'none' });
       });
     }
   </script>
