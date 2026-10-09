@@ -132,6 +132,16 @@
       });
       return nextProgress;
     };
+    // Firma estable para comparar el progreso aunque Firestore devuelva las
+    // propiedades internas en otro orden.
+    const progressSignature = (progress) => JSON.stringify(
+      Object.entries(progress || {})
+        .sort(([firstId], [secondId]) => String(firstId).localeCompare(String(secondId)))
+        .map(([habitId, value]) => {
+          const entry = normalizeProgressEntry(value);
+          return [String(habitId), entry.count, entry.history, entry.cycleKey ?? null];
+        })
+    );
     const formatProgressTimestamp = (timestamp, isWeekly) => {
       if (!timestamp) return null;
       const time = new Intl.DateTimeFormat('es-AR', { timeZone: ARGENTINA_TIME_ZONE, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(timestamp));
@@ -182,6 +192,9 @@
       const [toastMsg, setToastMsg] = useState(null);
       const undoTimeout = useRef(null);
       const localRecoveryDone = useRef(false);
+      // Evita que una respuesta anterior de Firebase vuelva a poner un check
+      // justo después de que lo llevaste a cero.
+      const pendingHabitProgressRef = useRef(null);
 
       useEffect(() => {
         if (!isLoggedIn || !secretCode) return;
@@ -236,6 +249,15 @@
             } : {};
             data = { ...data, ...progressSyncFields };
 
+            const pendingProgress = pendingHabitProgressRef.current;
+            if (pendingProgress && progressSignature(data.habitProgress) !== pendingProgress) {
+              // Todavía llegó una versión anterior. Conservamos la acción que
+              // acabás de hacer hasta recibir su confirmación real.
+              setIsLoading(false);
+              return;
+            }
+            if (pendingProgress) pendingHabitProgressRef.current = null;
+
             // Migración de versiones anteriores: recuperamos datos locales sólo
             // si esos campos todavía no existían en Firebase. Un arreglo vacío
             // sí es un estado válido y no debe revivir datos viejos.
@@ -287,6 +309,9 @@
         const resolvedUpdates = typeof updates === 'function' ? updates(currentState) : updates;
         const newState = { ...currentState, ...resolvedUpdates };
         gameStateRef.current = newState;
+        if (Object.prototype.hasOwnProperty.call(resolvedUpdates, 'habitProgress')) {
+          pendingHabitProgressRef.current = progressSignature(resolvedUpdates.habitProgress);
+        }
 
         if (undoMessage) {
           setPastState(currentState); 
